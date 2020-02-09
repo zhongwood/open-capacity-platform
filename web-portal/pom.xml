@@ -8,8 +8,6 @@
   <artifactId>web-portal</artifactId>
   <packaging>pom</packaging>
   
-  
- 
   <modules>
   	<!-- 后台中心-->
    	<module>back-center</module>
