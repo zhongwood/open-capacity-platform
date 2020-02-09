@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.ConsumerInfoMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.ConsumerInfoEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="third_type" jdbcType="INTEGER" property="thirdType"/>
+        <result column="union_id" jdbcType="VARCHAR" property="unionId"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="mobile" jdbcType="CHAR" property="mobile"/>
+        <result column="country" jdbcType="VARCHAR" property="country"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl"/>
+        <result column="privilege" jdbcType="VARCHAR" property="privilege"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, third_type, union_id, nick_name, sex, mobile, country, province, city, head_img_url, 
+    privilege, address, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from consumer_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from consumer_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+    insert into consumer_info ( third_type, union_id,
+      nick_name, sex, mobile, 
+      country, province, city, 
+      head_img_url, privilege, address, 
+      create_time, update_time)
+    values ( #{thirdType,jdbcType=INTEGER}, #{unionId,jdbcType=VARCHAR},
+      #{nickName,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{mobile,jdbcType=CHAR}, 
+      #{country,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{headImgUrl,jdbcType=VARCHAR}, #{privilege,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE})
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+        insert into consumer_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="thirdType != null">
+                third_type,
+            </if>
+            <if test="unionId != null">
+                union_id,
+            </if>
+            <if test="nickName != null">
+                nick_name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="headImgUrl != null">
+                head_img_url,
+            </if>
+            <if test="privilege != null">
+                privilege,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="thirdType != null">
+                #{thirdType,jdbcType=INTEGER},
+            </if>
+            <if test="unionId != null">
+                #{unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=CHAR},
+            </if>
+            <if test="country != null">
+                #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="headImgUrl != null">
+                #{headImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="privilege != null">
+                #{privilege,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+        update consumer_info
+        <set>
+            <if test="thirdType != null">
+                third_type = #{thirdType,jdbcType=INTEGER},
+            </if>
+            <if test="unionId != null">
+                union_id = #{unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=CHAR},
+            </if>
+            <if test="country != null">
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="headImgUrl != null">
+                head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="privilege != null">
+                privilege = #{privilege,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+    update consumer_info
+    set third_type = #{thirdType,jdbcType=INTEGER},
+      union_id = #{unionId,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      mobile = #{mobile,jdbcType=CHAR},
+      country = #{country,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      privilege = #{privilege,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                and t.username like concat('%', #{username}, '%')
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and t.nick_name like concat('%', #{nickname}, '%')
+            </if>
+
+            <if test="searchKey != null and searchKey != '' and searchKey=='mobile'">
+                and t.mobile like concat('%', #{searchValue}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id = #{orgId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findList" resultType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+        select * from consumer_info t
+        <include refid="where"/>
+        order by t.id desc
+
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+    <select id="userMap" resultType="java.util.HashMap">
+        SELECT province name,count(1) value from consumer_info
+         WHERE org_id  = #{orgId,jdbcType=INTEGER}
+         GROUP BY province
+    </select>
+    <select id="selectByUnionId" parameterType="java.lang.String"
+            resultType="com.open.capacity.answer.entity.ConsumerInfoEntity">
+        SELECT * from consumer_info
+         where id = #{union_id,jdbcType=VARCHAR}
+         and org_id  = #{orgId,jdbcType=INTEGER}
+    </select>
+</mapper>

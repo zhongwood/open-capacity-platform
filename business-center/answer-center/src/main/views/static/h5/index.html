@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
+    <title>Aliplayer Online Settings</title>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css"/>
+    <script type="text/javascript" charset="utf-8"
+            src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-min.js"></script>
+</head>
+<body>
+<div class="prism-player" id="player-con"></div>
+<script>
+    var player = new Aliplayer({
+
+            "id": "player-con",
+            "source": "https://outin-07029bb6b03411e991a100163e1c7426.oss-cn-shanghai.aliyuncs.com/sv/5ac50e57-16c32664cf1/5ac50e57-16c32664cf1.mp4?Expires=1565716162&OSSAccessKeyId=LTAIrkwb21KyGjJl&Signature=sL9Vp0lX9F6D3gqNX3OuiD7JBVM%3D",
+            "width": "100%",
+            "height": "500px",
+            //"autoplay": true,
+            "isLive": false,
+            "rePlay": false,
+            "playsinline": true,
+            "preload": true,
+            "controlBarVisibility": "always",
+            "useH5Prism": true,
+            "x5_video_position": 'top', //指定视频在上部显示
+            "x5_type": 'h5' //声明启用同层H5播放器，支持的值：h5
+        },
+
+        function (player) {
+            console.log("The player is created");
+        }
+        )
+    ;
+    player.fullscreenService.requestFullScreen;
+    player.play()
+</script>
+</body>

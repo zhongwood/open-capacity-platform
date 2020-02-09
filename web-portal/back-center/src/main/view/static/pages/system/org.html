@@ -1,0 +1,127 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">分组管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>分组管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            <!--搜索：
+            <select id="org-search-key">
+                <option value="">-请选择-</option>
+                <option value="org_id">ID</option>
+                <option value="orgname">账号</option>
+                <option value="nick_name">用户名</option>
+                <option value="phone">手机号</option>
+            </select>&emsp;
+            <input id="org-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="org-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button -->
+            <button id="org-btn-add" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
+            <!--button id="org-btn-export" class="layui-btn icon-btn"><i class="layui-icon">&#xe601;</i>导出</button -->
+        </div>
+
+        <table class="layui-table" id="org-table" lay-filter="org-table"></table>
+    </div>
+</div>
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="org-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <!--a class="layui-btn layui-btn-xs" lay-event="delete">删除</a -->
+</script>
+
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+
+        //if( admin.hasPerm('org:add') ) {
+        //   $('#btnAdd').hide();
+        //}
+
+        // 添加按钮绑定权限
+        if (!admin.hasPerm('user:post/users/saveOrUpdate')) {
+            $('#org-btn-add').hide();
+        }
+
+        // 渲染表格
+        table.render({
+            elem: '#org-table',
+            // url: config.base_server + 'org_query.json',
+            url: config.base_server + 'api-user/users/findOrgList',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'id', sort: true, title: '分组编号'},
+                {field: 'orgName', sort: true, title: '分组名称'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {align: 'center', toolbar: '#org-table-bar', title: '操作', width: 150}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#org-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(org-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') { // 修改
+                showEditModel(data);
+            } else if (layEvent === 'reset') { // 重置密码
+                layer.confirm('确定删除此分组吗？', function (i) {
+                    layer.close(i);
+                    layer.load(2);
+                    admin.req('api-org/orgs/' + obj.data.id + '/resetPassword', {}, function (data) {
+                        layer.closeAll('loading');
+                        if (data.resp_code == 0) {
+                            layer.msg(data.resp_msg, {icon: 1, time: 500});
+                        } else {
+                            layer.msg(data.resp_msg, {icon: 2, time: 500});
+                        }
+                    }, 'POST');
+                });
+            }
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            debugger
+            admin.putTempData('t_org', data);
+            var title = data ? '修改分组' : '添加分组';
+            admin.popupCenter({
+                title: title,
+                path: 'pages/system/org_form.html',
+                finish: function () {
+                    table.reload('org-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#org-btn-search').click(function () {
+            var key = $('#org-search-key').val();
+            var value = $('#org-search-value').val();
+            table.reload('org-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+    });
+</script>

@@ -1,0 +1,109 @@
+<!-- user表单弹窗 -->
+<form id="activity-form" lay-filter="activity-form" class="layui-form model-form">
+    <input name="id" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">开始时间</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="startTime" placeholder="yyyy-MM-dd HH:mm:ss">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">结束时间</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="endTime" placeholder="yyyy-MM-dd HH:mm:ss">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">抽奖次数</label>
+        <div class="layui-input-block">
+            <input type="text" name="times" lay-verify="required" placeholder="请输入" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否启用</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="status" id="status" lay-skin="switch" lay-text="启用|停用">
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" lay-filter="activity-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects', 'util', 'laydate'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        form.render('radio');
+
+
+        // 回显数据
+        var activity = admin.getTempData('t_activity');
+
+
+        console.log(activity);
+        $('#activity-form').attr('method', 'POST');
+        if (activity) {
+            form.val('activity-form', activity);
+            $('#activity-form').attr('method', 'POST');
+            debugger
+            var startTime = laydate.render({
+                elem: '#startTime'
+                , type: 'datetime'
+                , value: util.toDateString(activity.startTime)
+            });
+            var endTime = laydate.render({
+                elem: '#endTime'
+                , type: 'datetime'
+                , value: util.toDateString(activity.endTime)
+
+            });
+        } else {
+
+            var startTime = laydate.render({
+                elem: '#startTime'
+                , type: 'datetime'
+            });
+            var endTime = laydate.render({
+                elem: '#endTime'
+                , type: 'datetime'
+            });
+        }
+
+
+        // 表单提交事件
+        form.on('submit(activity-form-submit)', function (data) {
+            debugger
+
+            data.field.endTime = new Date($('#endTime').val().replace("/-/g", "/"));
+            data.field.startTime = new Date($('#startTime').val().replace("/-/g", "/"));
+            data.field.status = $('#status')[0].checked ? true : false;
+            layer.load(2);
+            admin.req('api-answer/saveOrUpdate', JSON.stringify(data.field), function (data) {
+                layer.closeAll('loading');
+                if (data.resp_code == 0) {
+                    layer.msg(data.resp_msg, {icon: 1, time: 500});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.resp_msg, {icon: 2, time: 500});
+                }
+            }, $('#activity-form').attr('method'));
+            return false;
+        });
+    })
+    ;
+</script>

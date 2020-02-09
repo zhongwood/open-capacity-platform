@@ -1,0 +1,95 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">用户管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>第三方用户管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="third-user-search-key">
+                <option value="">-请选择-</option>
+                <option value="mobile">手机号</option>
+                <option value="thirdType">来源</option>
+            </select>&emsp;
+            <input id="third-user-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="third-user-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+        </div>
+
+        <table class="layui-table" id="third-user-table" lay-filter="third-user-table"></table>
+    </div>
+</div>
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="third-third-user-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" style="display: none" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-xs" lay-event="reset" style="display: none">重置密码</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="third-user-tpl-state">
+    <input type="checkbox" lay-filter="third-user-tpl-state" value="{{d.id}}" lay-skin="switch" lay-text="正常|锁定"
+           {{d.enabled==true?'checked':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+
+
+        // 渲染表格
+        table.render({
+            elem: '#third-user-table',
+            // url: config.base_server + 'user_query.json',
+            url: config.base_server + 'api-answer/userList',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'id', sort: true, title: '用户编号'},
+                {field: 'nickName', sort: true, title: '昵称'},
+
+                {field: 'mobile', sort: true, title: '手机号'},
+                {
+                    sort: true, title: '性别', templet: function (d) {
+                        return d.sex == 0 ? "男" : "女"
+                    }
+                },
+                {field: 'city', sort: true, title: '城市'},
+                {
+                    sort: true, title: '来源', templet: function (d) {
+                        return d.thirdType == 1 ? "微信" : "其他"
+                    }
+                },
+
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+
+                {align: 'center', toolbar: '#third-third-user-table-bar', title: '操作', width: 150}
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#third-user-btn-search').click(function () {
+            var key = $('#third-user-search-key').val();
+            var value = $('#third-user-search-value').val();
+            table.reload('third-user-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+
+    });
+</script>

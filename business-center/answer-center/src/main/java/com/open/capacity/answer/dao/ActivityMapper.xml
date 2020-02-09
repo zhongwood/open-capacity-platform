@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.ActivityMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.ActivityEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="start_time" jdbcType="DATE" property="startTime"/>
+        <result column="end_time" jdbcType="DATE" property="endTime"/>
+        <result column="times" jdbcType="INTEGER" property="times"/>
+        <result column="home_page_path" jdbcType="VARCHAR" property="homePagePath"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, start_time, end_time, times, home_page_path, status,org_id, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from activity
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from activity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.ActivityEntity">
+    insert into activity (title, start_time,
+      end_time, times, home_page_path, 
+      status,org_id, create_time, update_time
+      )
+    values ( #{title,jdbcType=VARCHAR}, #{startTime,jdbcType=DATE},
+      #{endTime,jdbcType=DATE}, #{times,jdbcType=INTEGER}, #{homePagePath,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER},#{orgId,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.ActivityEntity">
+        insert into activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="times != null">
+                times,
+            </if>
+            <if test="homePagePath != null">
+                home_page_path,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=DATE},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=DATE},
+            </if>
+            <if test="times != null">
+                #{times,jdbcType=INTEGER},
+            </if>
+            <if test="homePagePath != null">
+                #{homePagePath,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.open.capacity.answer.entity.ActivityEntity">
+        update activity
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=DATE},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=DATE},
+            </if>
+            <if test="times != null">
+                times = #{times,jdbcType=INTEGER},
+            </if>
+            <if test="homePagePath != null">
+                home_page_path = #{homePagePath,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.ActivityEntity">
+    update activity
+    set title = #{title,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=DATE},
+      end_time = #{endTime,jdbcType=DATE},
+      times = #{times,jdbcType=INTEGER},
+      home_page_path = #{homePagePath,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="title != null and title != ''">
+                and t.title like concat('%', #{title}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+    <select id="queryList" resultType="com.open.capacity.answer.entity.ActivityEntity">
+        select * from activity t
+        <include refid="where"/>
+        order by t.id desc
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+    <select id="queryActivitySet" resultType="com.open.capacity.answer.entity.ActivityEntity">
+        select * from activity t
+        WHERE t.status = 1
+        AND t.org_id = #{orgId,jdbcType=INTEGER}
+    </select>
+
+
+    <update id="updateStatus" parameterType="com.open.capacity.answer.entity.ActivityEntity">
+        update activity
+        set
+        status = #{status,jdbcType=BIT},
+        update_time = #{updateTime,jdbcType=DATE}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

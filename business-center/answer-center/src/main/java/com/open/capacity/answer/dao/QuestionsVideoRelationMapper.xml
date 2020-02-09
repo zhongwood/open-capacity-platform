@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.QuestionsVideoRelationMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.QuestionsVideoRelationEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="question_lib_id" jdbcType="VARCHAR" property="questionLibId"/>
+        <result column="start_video_serial" jdbcType="VARCHAR" property="startVideoSerial"/>
+        <result column="end_video_serial" jdbcType="VARCHAR" property="endVideoSerial"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, question_lib_id, start_video_serial, end_video_serial, org_id, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from questions_video_relation
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from questions_video_relation
+    where question_lib_id = #{questionLibId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.QuestionsVideoRelationEntity">
+    insert into questions_video_relation (question_lib_id, start_video_serial, end_video_serial, org_id, create_time, update_time)
+    values (#{questionLibId,jdbcType=VARCHAR}, #{startVideoSerial,jdbcType=VARCHAR},
+      #{endVideoSerial,jdbcType=VARCHAR}, #{orgId,jdbcType=INTEGER},
+      #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE})
+  </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.open.capacity.answer.entity.QuestionsVideoRelationEntity">
+        update questions_video_relation
+        <set>
+            <if test="questionLibId != null">
+                question_lib_id = #{questionLibId,jdbcType=VARCHAR},
+            </if>
+            <if test="startVideoSerial != null">
+                start_video_serial = #{startVideoSerial,jdbcType=VARCHAR},
+            </if>
+            <if test="endVideoSerial != null">
+                end_video_serial = #{endVideoSerial,jdbcType=VARCHAR},
+            </if>
+
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+        AND org_id = #{orgId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.QuestionsVideoRelationEntity">
+    update questions_video_relation
+    set
+      question_lib_id = #{questionLibId,jdbcType=VARCHAR},
+      end_video_serial = #{endVideoSerial,jdbcType=VARCHAR},
+      start_video_serial = #{startVideoSerial,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+    AND org_id = #{orgId,jdbcType=INTEGER}
+  </update>
+
+
+    <select id="selectByQuestionId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from questions_video_relation
+        where question_lib_id = #{questionLibId,jdbcType=VARCHAR}
+        AND org_id = #{orgId,jdbcType=INTEGER}
+    </select>
+</mapper>

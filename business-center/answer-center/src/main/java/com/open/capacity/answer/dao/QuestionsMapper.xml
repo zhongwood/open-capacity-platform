@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.QuestionsMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.QuestionsEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="question_type" jdbcType="INTEGER" property="questionType"/>
+        <result column="video_serial" jdbcType="VARCHAR" property="videoSerial"/>
+        <result column="selection_id" jdbcType="INTEGER" property="selectionId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+               type="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+        <result column="question" jdbcType="LONGVARCHAR" property="question"/>
+        <result column="choiceA" jdbcType="LONGVARCHAR" property="choicea"/>
+        <result column="choiceB" jdbcType="LONGVARCHAR" property="choiceb"/>
+        <result column="choiceC" jdbcType="LONGVARCHAR" property="choicec"/>
+        <result column="choiceD" jdbcType="LONGVARCHAR" property="choiced"/>
+        <result column="choiceE" jdbcType="LONGVARCHAR" property="choicee"/>
+
+        <result column="video_serial_transition" jdbcType="LONGVARCHAR" property="videoSerialTransition"/>
+        <result column="video_serial_a" jdbcType="LONGVARCHAR" property="videoSerialA"/>
+        <result column="video_serial_b" jdbcType="LONGVARCHAR" property="videoSerialB"/>
+        <result column="video_serial_c" jdbcType="LONGVARCHAR" property="videoSerialC"/>
+        <result column="video_serial_d" jdbcType="LONGVARCHAR" property="videoSerialD"/>
+        <result column="video_serial_e" jdbcType="LONGVARCHAR" property="videoSerialE"/>
+        <result column="video_serial_right" jdbcType="LONGVARCHAR" property="videoSerialRight"/>
+        <result column="video_serial_wrong" jdbcType="LONGVARCHAR" property="videoSerialWrong"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, question_type, video_serial, selection_id, create_time, update_time
+  </sql>
+    <sql id="Blob_Column_List">
+    question, choiceA, choiceB, choiceC, choiceD, choiceE,video_serial_transition,video_serial_a,video_serial_b,video_serial_c,video_serial_d,video_serial_e,video_serial_right,video_serial_wrong,org_id
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from questions
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from questions
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+    insert into questions ( question_type, video_serial,
+      selection_id, create_time, update_time, 
+      question, choiceA, choiceB, 
+      choiceC, choiceD, choiceE,
+      video_serial_transition,video_serial_a,video_serial_b,video_serial_c,video_serial_d,video_serial_e,video_serial_right,video_serial_wrong,org_id
+      )
+    values (#{questionType,jdbcType=INTEGER}, #{videoSerial,jdbcType=VARCHAR},
+      #{selectionId,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE}, 
+      #{question,jdbcType=LONGVARCHAR}, #{choicea,jdbcType=LONGVARCHAR}, #{choiceb,jdbcType=LONGVARCHAR}, 
+      #{choicec,jdbcType=LONGVARCHAR}, #{choiced,jdbcType=LONGVARCHAR}, #{choicee,jdbcType=LONGVARCHAR},
+      #{videoSerialTransition,jdbcType=LONGVARCHAR},
+       #{videoSerialA,jdbcType=LONGVARCHAR},
+       #{videoSerialB,jdbcType=LONGVARCHAR},
+       #{videoSerialC,jdbcType=LONGVARCHAR},
+       #{videoSerialD,jdbcType=LONGVARCHAR},
+       #{videoSerialE,jdbcType=LONGVARCHAR},
+       #{videoSerialRight,jdbcType=LONGVARCHAR},
+       #{videoSerialWrong,jdbcType=LONGVARCHAR},
+       #{orgId,jdbcType=INTEGER}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+        insert into questions
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="questionType != null">
+                question_type,
+            </if>
+            <if test="videoSerial != null">
+                video_serial,
+            </if>
+            <if test="selectionId != null">
+                selection_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="question != null">
+                question,
+            </if>
+            <if test="choicea != null">
+                choiceA,
+            </if>
+            <if test="choiceb != null">
+                choiceB,
+            </if>
+            <if test="choicec != null">
+                choiceC,
+            </if>
+            <if test="choiced != null">
+                choiceD,
+            </if>
+            <if test="choicee != null">
+                choiceE,
+            </if>
+
+
+            <if test="videoSerialTransition != null">
+                video_serial_transition,
+            </if>
+            <if test="videoSerialA != null">
+                video_serial_a,
+            </if>
+            <if test="videoSerialB != null">
+                video_serial_b,
+            </if>
+            <if test="videoSerialC != null">
+                video_serial_c,
+            </if>
+            <if test="videoSerialD != null">
+                video_serial_d,
+            </if>
+            <if test="videoSerialE != null">
+                video_serial_e,
+            </if>
+            <if test="videoSerialRight != null">
+                video_serial_right,
+            </if>
+            <if test="videoSerialWrong != null">
+                video_serial_wrong,
+            </if>
+            <if test="orgId != null">
+                org_id
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="questionType != null">
+                #{questionType,jdbcType=INTEGER},
+            </if>
+            <if test="videoSerial != null">
+                #{videoSerial,jdbcType=VARCHAR},
+            </if>
+            <if test="selectionId != null">
+                #{selectionId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+            <if test="question != null">
+                #{question,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicea != null">
+                #{choicea,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choiceb != null">
+                #{choiceb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicec != null">
+                #{choicec,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choiced != null">
+                #{choiced,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicee != null">
+                #{choicee,jdbcType=LONGVARCHAR},
+            </if>
+
+
+            <if test="videoSerialTransition != null">
+                #{videoSerialTransition,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialA != null">
+                #{videoSerialA,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialB != null">
+                #{videoSerialB,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialC != null">
+                #{videoSerialC,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialD != null">
+                #{videoSerialD,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialE != null">
+                #{videoSerialE,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialRight != null">
+                #{videoSerialRight,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialWrong != null">
+                #{videoSerialWrong,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+        update questions
+        <set>
+            <if test="questionType != null">
+                question_type = #{questionType,jdbcType=INTEGER},
+            </if>
+            <if test="videoSerial != null">
+                video_serial = #{videoSerial,jdbcType=VARCHAR},
+            </if>
+            <if test="selectionId != null">
+                selection_id = #{selectionId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+            <if test="question != null">
+                question = #{question,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicea != null">
+                choiceA = #{choicea,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choiceb != null">
+                choiceB = #{choiceb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicec != null">
+                choiceC = #{choicec,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choiced != null">
+                choiceD = #{choiced,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="choicee != null">
+                choiceE = #{choicee,jdbcType=LONGVARCHAR},
+            </if>
+
+
+            <if test="videoSerialTransition != null">
+                video_serial_transition = #{videoSerialTransition,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialA != null">
+                video_serial_a = #{videoSerialA,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialB != null">
+                video_serial_b = #{videoSerialB,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialC != null">
+                video_serial_c = #{videoSerialC,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialD != null">
+                video_serial_d = #{videoSerialD,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialE != null">
+                video_serial_e = #{videoSerialE,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialRight != null">
+                video_serial_right = #{videoSerialRight,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="videoSerialWrong != null">
+                video_serial_wrong = #{videoSerialWrong,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+        AND org_id = #{orgId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+    update questions
+    set question_type = #{questionType,jdbcType=INTEGER},
+      video_serial = #{videoSerial,jdbcType=VARCHAR},
+      selection_id = #{selectionId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE},
+      question = #{question,jdbcType=LONGVARCHAR},
+      choiceA = #{choicea,jdbcType=LONGVARCHAR},
+      choiceB = #{choiceb,jdbcType=LONGVARCHAR},
+      choiceC = #{choicec,jdbcType=LONGVARCHAR},
+      choiceD = #{choiced,jdbcType=LONGVARCHAR},
+      choiceE = #{choicee,jdbcType=LONGVARCHAR},
+
+      video_serial_transition = #{videoSerialTransition,jdbcType=LONGVARCHAR},
+      video_serial_a = #{videoSerialA,jdbcType=LONGVARCHAR},
+      video_serial_b = #{videoSerialB,jdbcType=LONGVARCHAR},
+      video_serial_c = #{videoSerialC,jdbcType=LONGVARCHAR},
+      video_serial_d = #{videoSerialD,jdbcType=LONGVARCHAR},
+      video_serial_e = #{videoSerialE,jdbcType=LONGVARCHAR},
+      video_serial_right = #{videoSerialRight,jdbcType=LONGVARCHAR},
+      video_serial_wrong = #{videoSerialWrong,jdbcType=LONGVARCHAR},
+      org_id = #{orgId,jdbcType=INTEGER}
+
+    where id = #{id,jdbcType=INTEGER}
+    AND org_id = #{orgId,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.QuestionsEntity">
+    update questions
+    set question_type = #{questionType,jdbcType=INTEGER},
+      video_serial = #{videoSerial,jdbcType=VARCHAR},
+      selection_id = #{selectionId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="questionType != null and questionType != ''">
+                and t.question_type like concat('%', #{questionType}, '%')
+            </if>
+            <if test="question != null and question != ''">
+                and t.question like concat('%', #{question}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="findList" resultType="com.open.capacity.answer.entity.QuestionsWithBLOBsEntity">
+        select * from questions t
+        <include refid="where"/>
+        order by t.update_time desc
+
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+</mapper>

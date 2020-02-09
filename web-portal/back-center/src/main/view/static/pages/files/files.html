@@ -1,0 +1,350 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">文件中心</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>文件中心</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：<input id="files-edit-search" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="files-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="files-btn-upload" class="layui-btn icon-btn"><i class="layui-icon"></i>上传文件</button>
+        </div>
+
+        <!-- 数据表格 -->
+        <table class="layui-table" id="files-table" lay-filter="files-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="files-table-bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表单弹窗 -->
+<script type="text/html" id="auth-model">
+    <div style="padding-right: 40px; padding-top: 30px;padding-right: 45px;">
+        <div class="layui-upload">
+            <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button>
+            <div class="layui-upload-list">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>文件名</th>
+                        <th>大小</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="demoList"></tbody>
+                </table>
+            </div>
+            <button type="button" class="layui-btn" id="testListAction">开始上传</button>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    layui.use(['form', 'table', 'util', 'config', 'admin', 'upload'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var upload = layui.upload;
+
+
+// 渲染表格
+        table.render({
+            elem: '#files-table',
+// url: config.base_server + 'user_query.json',
+            url: config.base_server + 'api-answer/files',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'id', sort: true, title: '编号'},
+                {field: 'videoId', sort: true, title: '流媒体Id'},
+                {field: 'videoName', sort: true, title: '流媒体名称'},
+                {field: 'videoSize', sort: true, title: '文件大小(B)'},
+                {field: 'videoType', sort: true, title: '媒体类型'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                // {
+                //     field: 'url', width: 250, align: 'center', templet: function (d) {
+                //         if (d.isImg) {
+                //             return '<img src="' + d.url + '" class="layui-badge layui-bg-gray"></img>';
+                //         } else {
+                //             return '<a href="' + d.url + '" class="layui-badge layui-bg-gray">' + d.name + '</a>';
+                //         }
+                //     }, title: '内容'
+                // },
+                {align: 'center', width: 80, toolbar: '#files-table-bar', title: '操作'}
+            ]]
+        });
+
+// 工具条点击事件
+        table.on('tool(files-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') { // 删除
+                doDelete(obj);
+            }
+        });
+
+
+// 删除
+        var doDelete = function (obj) {
+            layer.confirm('确定要删除吗？', function (i) {
+                layer.close(i);
+                layer.load(2);
+                admin.req('api-answer/files/' + obj.data.id, {}, function (data) {
+                    layer.closeAll('loading');
+                    if (data.resp_code == 0) {
+                        layer.msg(data.resp_msg, {icon: 1, time: 500});
+                        obj.del();
+                    } else {
+                        layer.msg(data.resp_msg, {icon: 2, time: 500});
+                    }
+                }, 'DELETE');
+            });
+        };
+
+
+// 搜索按钮点击事件
+        $('#files-btn-search').click(function () {
+            var key = $('#files-edit-search').val();
+            table.reload('files-table', {where: {searchKey: key}});
+        });
+// 搜索按钮点击事件
+        $('#files-btn-upload').click(function () {
+            showEditModel();
+        });
+
+// 显示上传弹窗
+        var showEditModel = function () {
+            layer.open({
+                type: 1,
+                title: '上传视频',
+                area: ['750px', '350px'],
+                offset: '120px',
+                content:
+                    $('#auth-model').html(),
+                success:
+                // 先调用接口获取aliyu配置信息
+                    function () {
+                        //uploader();
+
+                        //多文件列表示例
+                        var demoListView = $('#demoList')
+                            , uploadListIns = upload.render({
+                            elem: '#testList'
+                            , accept: 'file'
+                            , multiple: true
+                            , auto: false
+                            , choose: function (obj) {
+                                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                                //读取本地文件
+                                obj.preview(function (index, file, result) {
+                                    index = file.name.replace('.', '-');
+                                    var tr = $(['<tr id="upload-' + index + '">'
+                                        , '<td>' + file.name + '</td>'
+                                        , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                                        , '<td>等待上传</td>'
+                                        , '<td>'
+                                        , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                                        , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                                        , '</td>'
+                                        , '</tr>'].join(''));
+
+                                    // 添加文件至uploader
+                                    var userData = '{"Vod":{"Title":"' + file.name + '","CateId":"1063977133387995"}}'
+                                    uploader.addFile(file, null, null, null, userData);
+                                    //单个重传
+                                    tr.find('.demo-reload').on('click', function () {
+                                        obj.upload(index, file);
+                                        var userData = '{"Vod":{"Title":"' + file.name + '","CateId":"1063977133387995"}}';
+                                        uploader.addFile(file, null, null, null, userData);
+
+                                    });
+                                    debugger
+                                    //删除
+                                    tr.find('.demo-delete').on('click', function () {
+                                        delete files[index]; //删除对应的文件
+                                        tr.remove();
+                                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                                        // 删除上传文件
+                                        uploader.deleteFile(index);
+                                    });
+
+                                    demoListView.append(tr);
+
+                                });
+                            }
+                            , done: function (res, index, upload) {
+                                // index = file.name;
+                                // if (res.code == 0) { //上传成功
+                                //     var tr = demoListView.find('tr#upload-' + index)
+                                //         , tds = tr.children();
+                                //     tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                                //     tds.eq(3).html(''); //清空操作
+                                //     return delete this.files[index]; //删除文件队列已经上传成功的文件
+                                // }
+                                // this.error(index, upload);
+                            }
+                            , error: function (index, upload) {
+                                // var tr = demoListView.find('tr#upload-' + index)
+                                //     , tds = tr.children();
+                                // tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                                // tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                            }
+                        });
+                        $('#testListAction').click(function () {
+                            uploader.startUpload();
+                        });
+                    }
+            })
+            ;
+        };
+
+
+        var uploader = new AliyunUpload.Vod({
+            //阿里账号ID，必须有值 ，值的来源https://help.aliyun.com/knowledge_detail/37196.html
+            userId: "1063977133387995",
+            //分片大小默认1M，不能小于100K
+            partSize: 1048576,
+            //并行上传分片个数，默认5
+            parallel: 5,
+            //网络原因失败时，重新上传次数，默认为3
+            retryCount: 3,
+            //网络原因失败时，重新上传间隔时间，默认为2秒
+            retryDuration: 2,
+            // 开始上传
+            'onUploadstarted': function (uploadInfo) {
+                debugger
+                //log("onUploadStarted:" + uploadInfo.file.name + ", endpoint:" + uploadInfo.endpoint + ", bucket:" + uploadInfo.bucket + ", object:" + uploadInfo.object);
+                //上传方式1, 需要根据uploadInfo.videoId是否有值，调用点播的不同接口获取uploadauth和uploadAddress，如果videoId有值，调用刷新视频上传凭证接口，否则调用创建视频上传凭证接口
+                var uploadAuth, uploadAddress, videoId;
+                if (uploadInfo.videoId) {
+                    // 如果 uploadInfo.videoId 存在, 调用 刷新视频上传凭证接口(https://help.aliyun.com/document_detail/55408.html)
+
+                    admin.req('api-answer/refreshUploadVideo', JSON.stringify({
+                            videoId: uploadInfo.videoId
+                        }),
+
+                        function (data) {
+                            console.log(data);
+                            uploadAuth = data.UploadAuth;
+                            uploadAddress = data.UploadAddress;
+                            videoId = data.VideoId;
+                        },
+                        'POST'
+                    );
+                }
+                else {
+                    // 如果 uploadInfo.videoId 不存在,调用 获取视频上传地址和凭证接口(https://help.aliyun.com/document_detail/55407.html)
+
+                    admin.req('api-answer/createUploadVideo', JSON.stringify({
+                            "title": uploadInfo.file.name, 'fileName': uploadInfo.file.name
+                        }),
+
+                        function (data) {
+                            console.log(data);
+                            uploadAuth = data.UploadAuth;
+                            uploadAddress = data.UploadAddress;
+                            videoId = data.VideoId;
+                        }
+
+                        ,
+                        'POST'
+                    )
+                    ;
+                }
+                //从点播服务获取的uploadAuth、uploadAddress和videoId,设置到SDK里
+                uploader.setUploadAuthAndAddress(uploadInfo, uploadAuth, uploadAddress, videoId);
+            },
+            // 文件上传成功
+            'onUploadSucceed': function (uploadInfo) {
+                index = uploadInfo.file.name.replace(".", '-');
+                debugger
+                console.log("onUploadSucceed: " + uploadInfo.file.name + ", endpoint:" + uploadInfo.endpoint + ", bucket:" + uploadInfo.bucket + ", object:" + uploadInfo.object);
+                var tr = $('#demoList').find('tr#upload-' + index)
+                    , tds = tr.children();
+                tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                tds.eq(3).html(''); //清空操作
+
+                uploadBack(uploadInfo);
+            },
+            // 文件上传失败
+            'onUploadFailed': function (uploadInfo, code, message) {
+                index = uploadInfo.file.name.replace(".", '-');
+                console.log("onUploadFailed: file:" + uploadInfo.file.name + ",code:" + code + ", message:" + message);
+                var tr = $('#demoList').find('tr#upload-' + index)
+                    , tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+            }
+
+            ,
+            // 文件上传进度，单位：字节
+            'onUploadProgress': function (uploadInfo, totalSize, loadedPercent) {
+                console.log("onUploadProgress:file:" + uploadInfo.file.name + ", fileSize:" + totalSize + ", percent:" + Math.ceil(loadedPercent * 100) + "%");
+                index = uploadInfo.file.name.replace(".", '-');
+                var percent = Math.ceil(loadedPercent * 100);
+                var tr = $('#demoList').find('tr#upload-' + index)
+                    , tds = tr.children();
+                tds.eq(2).html('<span style="color: #5FB878;">' + percent + '%</span>');
+            }
+
+            ,
+            // 上传凭证超时
+            'onUploadTokenExpired': function (uploadInfo) {
+                console.log("onUploadTokenExpired");
+                //实现时，根据uploadInfo.videoId调用刷新视频上传凭证接口重新获取UploadAuth
+                //https://help.aliyun.com/document_detail/55408.html
+                //从点播服务刷新的uploadAuth,设置到SDK里
+                uploader.resumeUploadWithAuth(uploadAuth);
+            },
+            //全部文件上传结束
+            'onUploadEnd': function (uploadInfo) {
+                console.log("onUploadEnd: uploaded all the files");
+            }
+
+        });
+
+        // 后台数据存储
+        var uploadBack = function (data) {
+            console.log("---------------" + data)
+
+            var json = {
+                    "videoType": data.file.type,
+                    "videoName": data.file.name,
+                    "videoSize": data.file.size,
+                    "videoId": data.videoId
+                }
+            ;
+            admin.req('api-answer/uploadBack', JSON.stringify(json),
+
+                function (data) {
+                    //todo 失败要回滚
+                    console.log(data)
+                },
+                'POST'
+            );
+        }
+
+    });
+
+
+</script>

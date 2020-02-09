@@ -1,0 +1,123 @@
+<!-- user表单弹窗 -->
+<form id="price-form" lay-filter="price-form" class="layui-form model-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动标题</label>
+        <div class="layui-input-block">
+            <select name="activityId" xm-select-search="" xm-select-max="15" xm-select-radio xm-select="activityId"
+                    id="activity_select"
+                    lay-verify="required">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">奖品类型</label>
+        <div class="layui-input-inline">
+            <select name="type" lay-verify="required" lay-search="">
+                <option value="">请选择</option>
+                <option value="1">虚拟奖品</option>
+                <option value="2">实物奖品</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">奖项名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">奖品数量</label>
+        <div class="layui-input-block">
+            <input type="text" name="counts" lay-verify="required" placeholder="请输入" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">奖品等级</label>
+        <div class="layui-input-inline">
+            <select name="level" lay-verify="required" lay-search="">
+                <option value="">请选择</option>
+                <option value="1">一等奖</option>
+                <option value="2">二等奖</option>
+                <option value="3">三等奖</option>
+                <option value="3">其他</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">中奖概率</label>
+        <div class="layui-input-block">
+            <input type="text" name="percentage" lay-verify="required" placeholder="请输入"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">实物奖品领取地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="ext" lay-verify="required" placeholder="请输入"
+                   autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" lay-filter="price-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects', 'util', 'laydate'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        form.render('radio');
+        form.render('select');
+
+        // 回显数据
+        var price = admin.getTempData('t_price');
+
+        // 表单提交事件
+        admin.req('api-answer/priceSelect', {}, function (data) {
+            layer.closeAll('loading');
+            // 渲染多选下拉框
+            var selectData = new Array();
+            for (var i = 0; i < data.length; i++) {
+                selectData.push({name: data[i].title, value: data[i].id});
+            }
+            formSelects.data('activityId', 'local', {arr: selectData});
+        }, "GET");
+
+
+        // 表单提交事件
+        form.on('submit(price-form-submit)', function (data) {
+            debugger
+            var match = /^(0(\.\d{1,2})?|1(\.0{1,2})?)$/;
+
+            if (!match.test(data.field.percentage)) {
+                layer.msg("请输入0-1之间两位小数！", {icon: 2, time: 700});
+                return false;
+            }
+            layer.load(2);
+            admin.req('api-answer/savePrize', data.field, function (data) {
+                    layer.closeAll('loading');
+                    debugger
+                    if (data.resp_code == 0) {
+                        layer.msg(data.resp_msg, {icon: 1, time: 500});
+                        admin.finishPopupCenter();
+                    } else {
+                        layer.msg(data.resp_msg, {icon: 2, time: 500});
+                    }
+                }, 'POST'
+            );
+            return false; //阻止表单跳转
+        });
+    })
+    ;
+</script>

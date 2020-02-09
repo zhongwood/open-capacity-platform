@@ -1,0 +1,135 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">抽奖记录</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>抽奖记录</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="priceLog-search-key">
+                <option value="">-请选择-</option>
+                <option value="thirdType">奖项名称</option>
+            </select>&emsp;
+            <input id="priceLog-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="priceLog-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+        </div>
+
+        <table class="layui-table" id="priceLog-table" lay-filter="priceLog-table"></table>
+    </div>
+</div>
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="priceLog-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="update">领取</a>
+</script>
+
+
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin', 'formSelects'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+
+        // 渲染表格
+        table.render({
+            elem: '#priceLog-table',
+            url: config.base_server + 'api-answer/queryPriceLogList',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'id', sort: true, title: 'ID'},
+                {field: 'accountId', sort: true, title: '账号编码'},
+                {field: 'userName', sort: true, title: '中奖姓名'},
+                {field: 'userMobile', sort: true, title: '中奖手机号'},
+                {field: 'prizeName', sort: true, title: '奖品名称'},
+                {field: 'prizeCode', sort: true, title: '兑奖码'},
+
+                {field: 'userAddress', sort: true, title: '地址'},
+                {field: 'status', sort: true, title: '是否领取'},
+                {
+                    align: 'center', toolbar: '#priceLog-table-bar',
+                    title: '操作'
+                },
+                {
+                    sort: true, templet:
+                        function (d) {
+                            return util.toDateString(d.createTime);
+                        }
+                    ,
+                    title: '获奖时间'
+                }
+                ,
+                {
+                    sort: true, templet:
+
+                        function (d) {
+                            return util.toDateString(d.updateTime);
+                        }
+
+                    ,
+                    title: '领取时间'
+                }
+                ,
+            ]],
+            done: function (res, curr, count) {
+                $("[data-field='status']").children().each(function () {
+                    if ($(this).text() == 1) {
+                        $(this).text("未领取")
+                    } else if ($(this).text() == 2) {
+                        $(this).text("已领取");
+                    }
+                });
+            }
+        })
+        ;
+
+        // 搜索按钮点击事件
+        $('#priceLog-btn-search').click(function () {
+            var key = $('#priceLog-search-key').val();
+            var value = $('#priceLog-search-value').val();
+            table.reload('priceLog-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+        // 工具条点击事件
+        table.on('tool(priceLog-table)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+                if (data.status == 2) {
+                    layer.msg("该奖品已于" + util.toDateString(data.updateTime) + "领取！不允许重复领取！", {icon: 2, time: 1000});
+                    return;
+                }
+                debugger
+                if (layEvent === 'update') { // 修改
+                    layer.confirm('确定要领取奖品吗？', function (i) {
+
+                        // 表单提交事件
+                        admin.req('api-answer/updateLog/' + data.id, {}, function (data) {
+                            layer.closeAll('loading');
+                            if (data.resp_code == 0) {
+                                layer.msg(data.resp_msg, {icon: 1, time: 500});
+                            } else {
+                                layer.msg(data.resp_msg, {icon: 2, time: 500});
+                            }
+                            table.reload('priceLog-table', {});
+                        }, "DELETE");
+
+                    });
+                }
+            }
+        );
+
+    })
+    ;
+</script>

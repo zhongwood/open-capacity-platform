@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.PrizeOptionsMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.PrizeOptionsEntity">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="activity_id" jdbcType="INTEGER" property="activityId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="ext" jdbcType="VARCHAR" property="ext"/>
+        <result column="counts" jdbcType="DECIMAL" property="counts"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="percentage" jdbcType="DECIMAL" property="percentage"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.PrizeOptionsEntity">
+    insert into prize_options (activity_id, type,
+      name, counts, level, 
+      percentage,org_id,ext, create_time, update_time
+      )
+    values (#{activityId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+      #{name,jdbcType=VARCHAR}, #{counts,jdbcType=DECIMAL}, #{level,jdbcType=INTEGER}, 
+      #{percentage,jdbcType=DECIMAL},#{orgId,jdbcType=INTEGER},#{ext,jdbcType=VARCHAR},   #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.PrizeOptionsEntity">
+        insert into prize_options
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="counts != null">
+                counts,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="percentage != null">
+                percentage,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="counts != null">
+                #{counts,jdbcType=DECIMAL},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="percentage != null">
+                #{percentage,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+
+
+    <sql id="where">
+        <where>
+            <if test="activity_id != null and activity_id != ''">
+                and t.activity_id like concat('%', #{activityId}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                and t.name like concat('%', #{name}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+    <select id="queryPriceList" resultType="com.open.capacity.answer.entity.PrizeOptionsEntity">
+        select * from prize_options t
+        LEFT JOIN activity a ON a.id = t.activity_id
+        <include refid="where"/>
+        order by t.id desc
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+
+    <select id="selectByActivityId" resultType="com.open.capacity.answer.entity.PrizeOptionsEntity">
+        select * from prize_options t
+        WHERE   t.activity_id = #{activityId}
+    </select>
+
+
+    <update id="updateCount" parameterType="java.lang.Integer">
+        update prize_options
+        set
+        counts = counts-1
+        where  id = #{id}
+    </update>
+
+    <select id="queryOne" parameterType="java.lang.Integer"
+            resultType="com.open.capacity.answer.entity.PrizeOptionsEntity">
+        select * from prize_options t
+        WHERE t.id = #{id}
+
+    </select>
+</mapper>

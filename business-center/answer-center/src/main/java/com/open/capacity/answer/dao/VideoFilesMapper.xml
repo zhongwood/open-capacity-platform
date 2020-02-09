@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.VideoFilesMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.VideoFilesEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="video_name" jdbcType="VARCHAR" property="videoName"/>
+        <result column="video_id" jdbcType="VARCHAR" property="videoId"/>
+        <result column="video_size" jdbcType="VARCHAR" property="videoSize"/>
+        <result column="video_time" jdbcType="TIMESTAMP" property="videoTime"/>
+        <result column="video_path" jdbcType="VARCHAR" property="videoPath"/>
+        <result column="thumbnail_path" jdbcType="VARCHAR" property="thumbnailPath"/>
+        <result column="video_status" jdbcType="INTEGER" property="videoStatus"/>
+        <result column="video_type" jdbcType="VARCHAR" property="videoType"/>
+        <result column="next_video" jdbcType="INTEGER" property="nextVideo"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, video_name, video_size, video_time, video_path, thumbnail_path, video_status, 
+    video_type, next_video, org_id, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from video_files
+        where video_id = #{videoId,jdbcType=VARCHAR}
+        AND org_id =#{orgId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="com.open.capacity.answer.entity.VideoFilesEntity">
+    delete from video_files
+    where id = #{id,jdbcType=INTEGER}
+     AND org_id =#{orgId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.VideoFilesEntity">
+    insert into video_files (id, video_id,video_name, video_size,
+      video_time, video_path, thumbnail_path, 
+      video_status, video_type, next_video, org_id,
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER},#{videoId,jdbcType=VARCHAR}, #{videoName,jdbcType=VARCHAR}, #{videoSize,jdbcType=VARCHAR},
+      #{videoTime,jdbcType=TIMESTAMP}, #{videoPath,jdbcType=VARCHAR}, #{thumbnailPath,jdbcType=VARCHAR}, 
+      #{videoStatus,jdbcType=INTEGER}, #{videoType,jdbcType=VARCHAR}, #{nextVideo,jdbcType=INTEGER},#{orgId,jdbcType=INTEGER},
+      #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE})
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.VideoFilesEntity">
+        insert into video_files
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="videoName != null">
+                video_name,
+            </if>
+            <if test="videoId != null">
+                video_id,
+            </if>
+            <if test="videoSize != null">
+                video_size,
+            </if>
+            <if test="videoTime != null">
+                video_time,
+            </if>
+            <if test="videoPath != null">
+                video_path,
+            </if>
+            <if test="thumbnailPath != null">
+                thumbnail_path,
+            </if>
+            <if test="videoStatus != null">
+                video_status,
+            </if>
+            <if test="videoType != null">
+                video_type,
+            </if>
+            <if test="nextVideo != null">
+                next_video,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="videoName != null">
+                #{videoName,jdbcType=VARCHAR},
+            </if>
+            <if test="videoId != null">
+                #{videoId,jdbcType=VARCHAR},
+            </if>
+            <if test="videoSize != null">
+                #{videoSize,jdbcType=VARCHAR},
+            </if>
+            <if test="videoTime != null">
+                #{videoTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="videoPath != null">
+                #{videoPath,jdbcType=VARCHAR},
+            </if>
+            <if test="thumbnailPath != null">
+                #{thumbnailPath,jdbcType=VARCHAR},
+            </if>
+            <if test="videoStatus != null">
+                #{videoStatus,jdbcType=INTEGER},
+            </if>
+            <if test="videoType != null">
+                #{videoType,jdbcType=VARCHAR},
+            </if>
+            <if test="nextVideo != null">
+                #{nextVideo,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.open.capacity.answer.entity.VideoFilesEntity">
+        update video_files
+        <set>
+            <if test="videoName != null">
+                video_name = #{videoName,jdbcType=VARCHAR},
+            </if>
+            <if test="videoSize != null">
+                video_size = #{videoSize,jdbcType=VARCHAR},
+            </if>
+            <if test="videoTime != null">
+                video_time = #{videoTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="videoPath != null">
+                video_path = #{videoPath,jdbcType=VARCHAR},
+            </if>
+            <if test="thumbnailPath != null">
+                thumbnail_path = #{thumbnailPath,jdbcType=VARCHAR},
+            </if>
+            <if test="videoStatus != null">
+                video_status = #{videoStatus,jdbcType=INTEGER},
+            </if>
+            <if test="videoType != null">
+                video_type = #{videoType,jdbcType=VARCHAR},
+            </if>
+            <if test="nextVideo != null">
+                next_video = #{nextVideo,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+        AND org_id = #{orgId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.VideoFilesEntity">
+    update video_files
+    set video_name = #{videoName,jdbcType=VARCHAR},
+      video_size = #{videoSize,jdbcType=VARCHAR},
+      video_time = #{videoTime,jdbcType=TIMESTAMP},
+      video_path = #{videoPath,jdbcType=VARCHAR},
+      thumbnail_path = #{thumbnailPath,jdbcType=VARCHAR},
+      video_status = #{videoStatus,jdbcType=INTEGER},
+      video_type = #{videoType,jdbcType=VARCHAR},
+      next_video = #{nextVideo,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+    and org_id = #{orgId,jdbcType=INTEGER}
+  </update>
+
+
+    <sql id="where">
+        <where>
+            <if test="videoName != null and videoName != ''">
+                and t.video_name like concat('%', #{videoName}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findList" resultType="com.open.capacity.answer.entity.VideoFilesEntity">
+        select * from video_files t
+        <include refid="where"/>
+        order by t.create_time desc
+    </select>
+
+    <select id="fileTiles" resultType="com.open.capacity.answer.entity.VideoFilesEntity">
+        select t.video_id,t.video_name from video_files t
+        <include refid="where"/>
+        order by t.create_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,119 @@
+<!-- user表单弹窗 -->
+<div style="    padding-top: 30px;padding-right: 45px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">套题名称</label>
+        <div class="layui-input-block">
+            <input name="set_title" id="set_title" placeholder="请输入套题名称" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">添加题库</label>
+        <div class="layui-input-block">
+            <select name="setId" xm-select-search="" xm-select-max="15" xm-select="setId" id="set_select"
+                    lay-verify="required">
+            </select>
+        </div>
+        <div>
+            <span>请按照顺序选择</span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">添加开场视频</label>
+        <div class="layui-input-block">
+            <select name="startVideoId" xm-select-radio="" xm-select-search="" xm-select-max="15"
+                    xm-select="startVideoId"
+                    id="start_video_select"
+                    lay-verify="required">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">添加结束视频</label>
+        <div class="layui-input-block">
+            <select name="endVideoId" xm-select-radio="" xm-select-search="" xm-select-max="15"
+                    xm-select="endVideoId"
+                    id="end_video_select"
+                    lay-verify="required">
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" id="answer-form-submit" lay-submit>下一步</button>
+    </div>
+</div>
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+
+        // 表单提交事件
+        admin.req('api-answer/questionList', {}, function (data) {
+            debugger
+            layer.closeAll('loading');
+
+            if (data) {
+                var rds = new Array();
+                for (var i = 0; i < data.length; i++) {
+                    rds.push({name: data[i].question, value: data[i].id});
+                }
+                formSelects.data('setId', 'local', {arr: rds});
+            } else {
+                layer.msg(data.resp_msg, {icon: 2, time: 500});
+            }
+        }, "GET");
+
+        admin.req('api-answer/fileTitles', {}, function (data) {
+            debugger
+            layer.closeAll('loading');
+            if (data) {
+                // 渲染多选下拉框
+                var videoSelectData = new Array();
+                for (var i = 0; i < data.length; i++) {
+                    videoSelectData.push({name: data[i].videoName, value: data[i].videoId});
+                }
+                formSelects.data('startVideoId', 'local', {arr: videoSelectData});
+                formSelects.data('endVideoId', 'local', {arr: videoSelectData});
+            } else {
+                layer.msg('获取视频标题失败', {icon: 2, time: 500});
+            }
+        }, 'GET');
+
+        $('#answer-form-submit').click(function () {
+            var title = $('#set_title').val();
+            if (!title) {
+                layer.msg("请输入标题！", {icon: 2, time: 500});
+                return false;
+            }
+            var arr = formSelects.value('setId', 'val');
+            var startVideoId = formSelects.value('startVideoId', 'valStr');
+            var endVideoId = formSelects.value('endVideoId', 'valStr');
+            console.log(arr)
+
+            // 表单提交事件
+            admin.req('api-answer/saveSet', JSON.stringify({
+                title: title,
+                ids: arr,
+                startVideoId: startVideoId,
+                endVideoId: endVideoId
+            }), function (data) {
+                debugger
+                layer.closeAll('loading');
+
+                if (data.resp_code == 0) {
+                    admin.putTempData('questionLibId', data.datas);
+                    //this.href = "#!vieworupdateset";
+                    window.location.href = '#!vieworupdateset';
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.resp_msg, {icon: 2, time: 500});
+                }
+            }, "POST");
+
+        });
+    });
+</script>

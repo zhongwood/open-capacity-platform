@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.server.dao.SysConfigDao">
+
+    <update id="update">
+        update sys_config
+        <set>
+            <if test="type != null">
+                `type` = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="key != null and key != ''">
+                `key` = #{key,jdbcType=VARCHAR},
+            </if>
+            <if test="value != null and value != ''">
+                `value` = #{value,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null">
+                data_type = #{dataType,jdbcType=VARCHAR},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+        AND org_id =#{orgId,jdbcType=INTEGER}
+    </update>
+
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="key != null and key != ''">
+                and t.key like concat('%', #{key}, '%')
+            </if>
+            <if test="type != null and type != ''">
+                and t.type = #{type}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id = #{orgId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="count" resultType="int">
+        select count(*) from sys_config t
+        <include refid="where"/>
+    </select>
+
+    <select id="findList" resultType="com.open.capacity.server.model.SysConfig">
+        select * from sys_config t
+        <include refid="where"/>
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+    <select id="findOnes" resultType="com.open.capacity.server.model.SysConfig">
+        select * from sys_config t
+        <include refid="where"/>
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+    <select id="findOne" resultType="com.open.capacity.server.model.SysConfig">
+        select * from sys_config t
+        WHERE
+        t.key = #{key}
+        and t.type = #{type}
+        and t.org_id = #{orgId}
+</select>
+    <select id="findByType" resultType="com.open.capacity.server.model.SysConfig">
+        select * from sys_config t
+        WHERE t.type = #{type}
+        AND t.org_id = #{orgId}
+    </select>
+</mapper>

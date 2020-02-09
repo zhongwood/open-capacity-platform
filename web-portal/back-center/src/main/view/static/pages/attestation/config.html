@@ -1,0 +1,205 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">配置管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>配置管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：<input id="config-edit-search" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="config-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="config-btn-add" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
+        </div>
+
+        <!-- 数据表格 -->
+        <table class="layui-table" id="config-table" lay-filter="config-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="config-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<!-- 表单弹窗 -->
+<script type="text/html" id="config-model">
+    <form id="config-form" lay-filter="config-form" class="layui-form model-form">
+        <input name="id" type="hidden"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">应用标识</label>
+            <div class="layui-input-inline">
+                <select name="type" lay-verify="required" lay-search="">
+                    <option value="">请选择</option>
+                    <option value="WECHAT">微信</option>
+                    <option value="VOD">阿里云VOD</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">key</label>
+            <div class="layui-input-block">
+                <input name="key" placeholder="请输入key值" type="text" class="layui-input" maxlength="20"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">value</label>
+            <div class="layui-input-block">
+                <input name="value" placeholder="请输入value值" type="text" class="layui-input"
+                       maxlength="20"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据类型</label>
+            <div class="layui-input-inline">
+                <select name="dataType" lay-verify="required" lay-search="">
+                    <option value="">默认字符串类型</option>
+                    <option value="String">String</option>
+                    <option value="Boolean">Boolean</option>
+                    <option value="Byte">Byte</option>
+                    <option value="Character">Character</option>
+                    <option value="Short">Short</option>
+                    <option value="Integer">Integer</option>
+                    <option value="Long">Long</option>
+                    <option value="Float">Float</option>
+                    <option value="Double">Double</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <input name="remark" placeholder="请输入备注" type="text" class="layui-input" maxlength="20"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item model-form-footer">
+            <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+            <button class="layui-btn" lay-filter="config-form-submit" lay-submit>保存</button>
+        </div>
+    </form>
+</script>
+
+
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin'], function () {
+            var form = layui.form;
+            var table = layui.table;
+            var config = layui.config;
+            var layer = layui.layer;
+            var util = layui.util;
+            var admin = layui.admin;
+
+
+            // 渲染表格
+            table.render({
+                elem: '#config-table',
+                url: config.base_server + 'api-auth/services/getConfigList',
+                method: 'GET',
+                where: {
+                    access_token: config.getToken().access_token
+                },
+                page: true,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'type', width: 180, sort: true, title: '应用标识'},
+                    {field: 'key', width: 180, sort: true, title: 'key'},
+                    {field: 'value', sort: true, title: '值'},
+                    {field: 'dataType', sort: true, title: '数据类型'},
+                    {field: 'remark', sort: true, title: '备注'},
+                    {align: 'center', width: 250, toolbar: '#config-table-bar', title: '操作'}
+                ]]
+            });
+
+            // 工具条点击事件
+            table.on('tool(config-table)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+
+                if (layEvent === 'del') { // 删除
+                    doDelete(obj);
+                } else if (layEvent === 'edit') { //修改
+                    showEditModel(data);
+                }
+            });
+
+
+            // 删除
+            var doDelete = function (obj) {
+                layer.confirm('确定要删除吗？', function (i) {
+                    layer.close(i);
+                    layer.load(2);
+                    admin.req('api-auth/services/deleteConfig/' + obj.data.id, {}, function (data) {
+                        layer.closeAll('loading');
+                        layer.msg('成功', {icon: 1, time: 500});
+                        obj.del();
+                    }, 'DELETE');
+                });
+                table.reload('config-table', {});
+            };
+
+            // 搜索按钮点击事件
+            $('#config-btn-search').click(function () {
+                var key = $('#config-edit-search').val();
+                table.reload('config-table', {where: {searchKey: key}});
+            });
+
+            // 添加按钮点击事件
+            $('#config-btn-add').click(function () {
+                showEditModel();
+            });
+
+
+            // 显示编辑弹窗
+            var showEditModel = function (data) {
+                layer.open({
+                    type: 1,
+                    title: data ? '修改应用' : '添加应用',
+                    area: '450px',
+                    offset: '120px',
+                    content: $('#config-model').html(),
+                    success: function () {
+                        $('#config-form')[0].reset();
+                        $('#config-form').attr('method', 'POST');
+                        if (data) {
+                            // $("input[name='type']").attr('disabled', true);
+                            // $("input[name='key']").attr('class', "layui-input layui-disabled");
+                            // $("input[name='value']").attr('disabled', true);
+                            // $("input[name='dataType']").attr('class', "layui-input layui-disabled");
+                            // $("input[name='dataType']").attr('class', "layui-input layui-disabled");
+                            form.val('config-form', data);
+                            $('#config-form').attr('method', 'POST');
+                        }
+                    }
+                });
+            };
+
+            // 表单提交事件
+            form.on('submit(config-form-submit)', function (data) {
+                debugger
+                layer.load(2);
+                admin.req('api-auth/services/saveOrUpdateConfig', JSON.stringify(data.field), function (data) {
+                        layer.closeAll('loading');
+                        console.log(data);
+                        if (data.resp_code == 0) {
+                            layer.msg(data.resp_msg, {icon: 1, time: 500});
+                            table.reload('config-table');
+                            layer.closeAll('page');
+
+                        } else {
+                            layer.msg(data.resp_msg, {icon: 2, time: 500});
+                        }
+                        table.reload('config-table', {});
+                    }, $('#config-form').attr('method')
+                );
+                return false;
+            });
+
+        }
+    )
+    ;
+</script>

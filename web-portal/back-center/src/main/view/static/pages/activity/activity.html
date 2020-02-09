@@ -1,0 +1,159 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">活动管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>活动管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="activity-search-key">
+                <option value="">-请选择-</option>
+                <option value="thirdType">活动名称</option>
+            </select>&emsp;
+            <input id="activity-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="activity-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="activity-btn-add" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
+        </div>
+
+        <table class="layui-table" id="activity-table" lay-filter="activity-table"></table>
+    </div>
+</div>
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="activity-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">更新活动信息</a>
+    <!--a class="layui-btn layui-btn-xs" lay-event="bind" href="#!vieworupdateset">查看题库</a -->
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="activity-tpl-state">
+    <input type="checkbox" lay-filter="activity-tpl-state" value="{{d.id}}" lay-skin="switch"
+           lay-text="启用|停用"
+           {{d.status==true?'checked':''}}/>
+</script>
+
+<!-- 关联弹窗 -->
+<script type="text/html" id="activity-bind-model">
+    <div class="layui-form-item">
+        <label class="layui-form-label">视频标题</label>
+        <div class="layui-input-block">
+            <select name="videoId" xm-select-radio="" xm-select="videoId" id="video_select" lay-verify="required">
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" id="activity-form-submit" lay-submit>保存</button>
+    </div>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin', 'formSelects'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+
+        // 渲染表格
+        table.render({
+            elem: '#activity-table',
+            url: config.base_server + 'api-answer/queryList',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'id', sort: true, title: 'ID'},
+                {field: 'title', sort: true, title: '活动名称'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.startTime);
+                    }, title: '活动开始时间'
+                },
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.endTime);
+                    }, title: '活动结束时间'
+                },
+                {field: 'times', sort: true, title: '抽奖次数'},
+                //{field: 'homePagePath', sort: true, title: '转盘主页地址'},
+                {field: 'status', sort: true, templet: '#activity-tpl-state', title: '状态', width: 150},
+                {align: 'center', toolbar: '#activity-table-bar', title: '操作', width: 250}
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#activity-btn-search').click(function () {
+            var key = $('#activity-search-key').val();
+            var value = $('#activity-search-value').val();
+            table.reload('activity-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+        // 工具条点击事件
+        table.on('tool(activity-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            debugger
+            if (layEvent === 'edit') { // 修改
+                showEditModel(obj.data);
+            }
+        });
+
+        // 添加按钮绑定权限
+        // if (!admin.hasPerm('activity:saveOrUpdate')) {
+        //     $('#activity-btn-add').hide();
+        // }
+
+        // 添加按钮点击事件
+        $('#activity-btn-add').click(function () {
+            showEditModel();
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            //修改sex值
+            if (data) {
+                data.questionType = data.questionType + '';
+            }
+            admin.putTempData('t_activity', data);
+            var title = data ? '修改活动' : '添加活动';
+            admin.popupCenter({
+                title: title,
+                path: 'pages/activity/activity_form.html',
+                finish: function () {
+                    table.reload('activity-table', {});
+                }
+            });
+        };
+
+
+        form.on('switch(activity-tpl-state)', function (obj) {
+            layer.load(2);
+            admin.req('api-answer/updateStatus', {
+                id: obj.elem.value,
+                enabled: obj.elem.checked ? true : false
+            }, function (data) {
+                layer.closeAll('loading');
+                if (data.resp_code == 0) {
+                    layer.msg(data.resp_msg, {icon: 1, time: 500});
+                    //table.reload('table-user', {});
+                } else {
+                    layer.msg(data.resp_msg, {icon: 2, time: 500});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            }, 'GET');
+        });
+    })
+    ;
+</script>

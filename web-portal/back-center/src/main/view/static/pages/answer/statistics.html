@@ -1,0 +1,409 @@
+<!--<div class="layui-row layui-col-space10">-->
+<!--<div id="answer_static" class="layui-col-lg6 layui-col-md6"-->
+<!--style="width: 550px;height:400px;margin: 19px;background-color: white;">-->
+
+<!--</div>-->
+<!--<div id="answer" class="layui-col-lg6 layui-col-md6"-->
+<!--style="width: 550px;height:400px;margin: 19px;background-color: white;">-->
+<!--</div>-->
+<!--&lt;!&ndash;div id="answer_static" class="layui-col-lg6 layui-col-md6"-->
+<!--style="width: 550px;height:400px;margin: 19px;background-color: white;">-->
+
+<!--</div>-->
+<!--<div id="answer" class="layui-col-lg6 layui-col-md6"-->
+<!--style="width: 550px;height:400px;margin: 19px;background-color: white;">-->
+<!--</div &ndash;&gt;-->
+<!--</div>-->
+
+
+<!--<script>-->
+<!--layui.use(['form', 'table', 'util', 'config', 'admin', 'formSelects'], function () {-->
+<!--var form = layui.form;-->
+<!--var table = layui.table;-->
+<!--var config = layui.config;-->
+<!--var layer = layui.layer;-->
+<!--var util = layui.util;-->
+<!--var admin = layui.admin;-->
+<!--var formSelects = layui.formSelects;-->
+<!--admin.req('api-answer/answer/queryQuestionStatic', {}, function (data) {-->
+<!--if (data.resp_code == 0) {-->
+<!--console.log(data)-->
+<!--if (data.datas.length > 0) {-->
+<!--var datas = eval('(' + data.datas + ')');-->
+<!--var legend = [];-->
+<!--for (var i = 0; i < datas.length; i++) {-->
+<!--legend.push(datas[i].name)-->
+<!--}-->
+
+<!--showCharts(datas, legend)-->
+<!--}-->
+<!--}-->
+<!--else {-->
+<!--layer.msg('获取信息失败！', {icon: 2, time: 500});-->
+<!--}-->
+<!--},-->
+<!--'GET'-->
+<!--)-->
+<!--;-->
+
+<!--function showCharts(datas, legend) {-->
+<!--// 基于准备好的dom，初始化echarts实例-->
+<!--var myChart = echarts.init(document.getElementById('answer_static'));-->
+
+<!--// 指定图表的配置项和数据-->
+<!--option = {-->
+<!--tooltip: {-->
+<!--trigger: 'item',-->
+<!--formatter:-->
+<!--"{a} <br/>{b} : {c} ({d}%)"-->
+<!--}-->
+<!--,-->
+<!--legend: {-->
+<!--orient: 'vertical',-->
+<!--x:-->
+<!--'left',-->
+<!--data: legend-->
+<!--}-->
+<!--,-->
+<!--formatter: function (e) {-->
+<!--var newStr = " ";-->
+<!--var start, end;-->
+<!--var name_len = e.length;    　　　　　　　　　　　　   //每个内容名称的长度-->
+<!--var max_name = 14;    　　　　　　　　　　　　　　　　　　//每行最多显示的字数-->
+<!--var new_row = Math.ceil(name_len / max_name); 　　　　// 最多能显示几行，向上取整比如2.1就是3行-->
+<!--if (name_len > max_name) { 　　　　　　　　　　　　　　  //如果长度大于每行最多显示的字数-->
+<!--for (var i = 0; i < new_row; i++) { 　　　　　　　　　　　   //循环次数就是行数-->
+<!--var old = '';    　　　　　　　　　　　　　　　　    //每次截取的字符-->
+<!--start = i * max_name;    　　　　　　　　　　     //截取的起点-->
+<!--end = start + max_name;    　　　　　　　　　  //截取的终点-->
+<!--if (i == new_row - 1) {    　　　　　　　　　　　　   //最后一行就不换行了-->
+<!--old = e.substring(start);-->
+<!--} else {-->
+<!--old = e.substring(start, end) + "\n";-->
+<!--}-->
+<!--newStr += old; //拼接字符串-->
+<!--}-->
+<!--} else {                                          //如果小于每行最多显示的字数就返回原来的字符串-->
+<!--newStr = e;-->
+<!--}-->
+<!--return newStr;-->
+<!--},-->
+<!--toolbox: {-->
+<!--show: true,-->
+<!--feature:-->
+<!--{-->
+<!--mark: {-->
+<!--show: true-->
+<!--}-->
+<!--,-->
+<!--dataView: {-->
+<!--show: true, readOnly:-->
+<!--false-->
+<!--}-->
+<!--,-->
+<!--magicType: {-->
+<!--show: true,-->
+<!--type:-->
+<!--['pie', 'funnel'],-->
+<!--option:-->
+<!--{-->
+<!--funnel: {-->
+<!--x: '25%',-->
+<!--width:-->
+<!--'30%',-->
+<!--funnelAlign:-->
+<!--'right',-->
+<!--max:-->
+<!--1548-->
+<!--}-->
+<!--}-->
+<!--}-->
+<!--,-->
+<!--restore: {-->
+<!--show: true-->
+<!--}-->
+<!--,-->
+<!--saveAsImage: {-->
+<!--show: true-->
+<!--}-->
+<!--}-->
+<!--}-->
+<!--,-->
+<!--calculable: true,-->
+<!--series:-->
+<!--[-->
+<!--{-->
+<!--name: '答题选答次数',-->
+<!--type: 'pie',-->
+<!--radius: '45%',-->
+<!--center: ['55%', '60%'],-->
+<!--data: datas,-->
+<!--itemStyle: {-->
+<!--normal: {-->
+<!--label: {-->
+<!--show: true,-->
+<!--formatter:-->
+<!--function (e) {-->
+<!--var newStr = " ";-->
+<!--var start, end;-->
+<!--var name_len = e.name.length;    　　　　　　　　　　　　   //每个内容名称的长度-->
+<!--var max_name = 8;    　　　　　　　　　　　　　　　　　　//每行最多显示的字数-->
+<!--var new_row = Math.ceil(name_len / max_name); 　　　　// 最多能显示几行，向上取整比如2.1就是3行-->
+<!--if (name_len > max_name) { 　　　　　　　　　　　　　　  //如果长度大于每行最多显示的字数-->
+<!--for (var i = 0; i < new_row; i++) { 　　　　　　　　　　　   //循环次数就是行数-->
+<!--var old = '';    　　　　　　　　　　　　　　　　    //每次截取的字符-->
+<!--start = i * max_name;    　　　　　　　　　　     //截取的起点-->
+<!--end = start + max_name;    　　　　　　　　　  //截取的终点-->
+<!--if (i == new_row - 1) {    　　　　　　　　　　　　   //最后一行就不换行了-->
+<!--old = e.name.substring(start);-->
+<!--} else {-->
+<!--old = e.name.substring(start, end) + "\n";-->
+<!--}-->
+<!--newStr += old; //拼接字符串-->
+<!--}-->
+<!--} else {                                          //如果小于每行最多显示的字数就返回原来的字符串-->
+<!--newStr = e.name;-->
+<!--}-->
+<!--return newStr;-->
+<!--}-->
+<!--}-->
+<!--},-->
+<!--labelLine: {-->
+<!--show: true-->
+<!--}-->
+<!--},-->
+<!--emphasis: {-->
+<!--shadowBlur: 10,-->
+<!--shadowOffsetX: 0,-->
+<!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
+<!--}-->
+
+<!--},-->
+<!--]-->
+<!--}-->
+<!--;-->
+<!--// 使用刚指定的配置项和数据显示图表。-->
+<!--myChart.setOption(option);-->
+<!--showAnswer({name: legend[0]});-->
+<!--/**-->
+<!--* 点击事件-->
+<!--*/-->
+<!--myChart.on('click', function (params) {-->
+<!--showAnswer(params);-->
+<!--})-->
+<!--}-->
+
+<!--function showAnswer(params) {-->
+
+<!--debugger-->
+<!--var name = params.name;-->
+
+<!--admin.req('api-answer/answer/queryStatic', {questionTitle: name}, function (data) {-->
+<!--if (data.resp_code == 0) {-->
+<!--console.log(data)-->
+
+<!--//选择题-->
+<!--var dataAnswer = [];-->
+<!--var legendArr = [];-->
+<!--if (data.datas.questionType == 1) {-->
+
+<!--if (data.datas.choicea != null && data.datas.choicea != "null") {-->
+<!--legendArr.push("A:" + data.datas.choicea);-->
+<!--legendArr.push("A:" + data.datas.choicea);-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.choiceaNum,-->
+<!--name: "A:" + data.datas.choicea-->
+<!--})-->
+<!--}-->
+<!--if (data.datas.choiceb != null && data.datas.choiceb != "null") {-->
+<!--legendArr.push("B:" + data.datas.choiceb);-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.choicebNum,-->
+<!--name: "B:" + data.datas.choiceb-->
+<!--});-->
+<!--}-->
+<!--if (data.datas.choicec != null && data.datas.choicec != "null") {-->
+<!--legendArr.push("C:" + data.datas.choicec);-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.choicecNum,-->
+<!--name: "C:" + data.datas.choicec-->
+<!--});-->
+<!--}-->
+<!--if (data.datas.choiced != null && data.datas.choiced != "null") {-->
+<!--legendArr.push("D:" + data.datas.choiced);-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.choicedNum,-->
+<!--name: "D:" + data.datas.choiced-->
+<!--});-->
+<!--}-->
+<!--if (data.datas.choicee != null && data.datas.choicee != "null") {-->
+<!--legendArr.push("E:" + data.datas.choicee);-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.choiceeNum,-->
+<!--name: "E:" + data.datas.choicee-->
+<!--});-->
+<!--}-->
+
+<!--} else if (data.datas.questionType == 2) {-->
+<!--legendArr.push("错误");-->
+<!--legendArr.push("正确");-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.wrongNum,-->
+<!--name: "错误"-->
+<!--});-->
+<!--dataAnswer.push({-->
+<!--value: data.datas.rightNum,-->
+<!--name: "正确"-->
+<!--});-->
+<!--}-->
+
+<!--// 基于准备好的dom，初始化echarts实例-->
+<!--var myChartAnswer = echarts.init(document.getElementById('answer'));-->
+
+<!--// 指定图表的配置项和数据-->
+<!--optionAnswer = {-->
+<!--tooltip: {-->
+<!--trigger: 'item',-->
+<!--formatter:-->
+<!--"{a} <br/>{b} : {c} ({d}%)"-->
+<!--}-->
+<!--,-->
+<!--legend: {-->
+<!--orient: 'vertical',-->
+<!--x:-->
+<!--'left',-->
+<!--data: legendArr-->
+<!--}-->
+<!--,-->
+<!--formatter: function (e) {-->
+<!--var newStr = " ";-->
+<!--var start, end;-->
+<!--var name_len = e.length;    　　　　　　　　　　　　   //每个内容名称的长度-->
+<!--var max_name = 14;    　　　　　　　　　　　　　　　　　　//每行最多显示的字数-->
+<!--var new_row = Math.ceil(name_len / max_name); 　　　　// 最多能显示几行，向上取整比如2.1就是3行-->
+<!--if (name_len > max_name) { 　　　　　　　　　　　　　　  //如果长度大于每行最多显示的字数-->
+<!--for (var i = 0; i < new_row; i++) { 　　　　　　　　　　　   //循环次数就是行数-->
+<!--var old = '';    　　　　　　　　　　　　　　　　    //每次截取的字符-->
+<!--start = i * max_name;    　　　　　　　　　　     //截取的起点-->
+<!--end = start + max_name;    　　　　　　　　　  //截取的终点-->
+<!--if (i == new_row - 1) {    　　　　　　　　　　　　   //最后一行就不换行了-->
+<!--old = e.substring(start);-->
+<!--} else {-->
+<!--old = e.substring(start, end) + "\n";-->
+<!--}-->
+<!--newStr += old; //拼接字符串-->
+<!--}-->
+<!--} else {                                          //如果小于每行最多显示的字数就返回原来的字符串-->
+<!--newStr = e;-->
+<!--}-->
+<!--return newStr;-->
+<!--},-->
+<!--toolbox: {-->
+<!--show: true,-->
+<!--feature:-->
+<!--{-->
+<!--mark: {-->
+<!--show: true-->
+<!--}-->
+<!--,-->
+<!--dataView: {-->
+<!--show: true, readOnly:-->
+<!--false-->
+<!--}-->
+<!--,-->
+<!--magicType: {-->
+<!--show: true,-->
+<!--type:-->
+<!--['pie', 'funnel'],-->
+<!--option:-->
+<!--{-->
+<!--funnel: {-->
+<!--x: '25%',-->
+<!--width:-->
+<!--'30%',-->
+<!--funnelAlign:-->
+<!--'right',-->
+<!--max:-->
+<!--1548-->
+<!--}-->
+<!--}-->
+<!--}-->
+<!--,-->
+<!--restore: {-->
+<!--show: true-->
+<!--}-->
+<!--,-->
+<!--saveAsImage: {-->
+<!--show: true-->
+<!--}-->
+<!--}-->
+<!--}-->
+<!--,-->
+<!--calculable: true,-->
+<!--series:-->
+<!--[-->
+<!--{-->
+<!--name: '答题选答次数',-->
+<!--type: 'pie',-->
+<!--radius: '45%',-->
+<!--center: ['55%', '60%'],-->
+<!--data: dataAnswer,-->
+<!--itemStyle: {-->
+<!--normal: {-->
+<!--label: {-->
+<!--show: true,-->
+<!--formatter:-->
+<!--function (e) {-->
+<!--var newStr = " ";-->
+<!--var start, end;-->
+<!--var name_len = e.name.length;    　　　　　　　　　　　　   //每个内容名称的长度-->
+<!--var max_name = 8;    　　　　　　　　　　　　　　　　　　//每行最多显示的字数-->
+<!--var new_row = Math.ceil(name_len / max_name); 　　　　// 最多能显示几行，向上取整比如2.1就是3行-->
+<!--if (name_len > max_name) { 　　　　　　　　　　　　　　  //如果长度大于每行最多显示的字数-->
+<!--for (var i = 0; i < new_row; i++) { 　　　　　　　　　　　   //循环次数就是行数-->
+<!--var old = '';    　　　　　　　　　　　　　　　　    //每次截取的字符-->
+<!--start = i * max_name;    　　　　　　　　　　     //截取的起点-->
+<!--end = start + max_name;    　　　　　　　　　  //截取的终点-->
+<!--if (i == new_row - 1) {    　　　　　　　　　　　　   //最后一行就不换行了-->
+<!--old = e.name.substring(start);-->
+<!--} else {-->
+<!--old = e.name.substring(start, end) + "\n";-->
+<!--}-->
+<!--newStr += old; //拼接字符串-->
+<!--}-->
+<!--} else {                                          //如果小于每行最多显示的字数就返回原来的字符串-->
+<!--newStr = e.name;-->
+<!--}-->
+<!--return newStr;-->
+<!--}-->
+<!--}-->
+<!--},-->
+<!--labelLine: {-->
+<!--show: true-->
+<!--}-->
+<!--},-->
+<!--emphasis: {-->
+<!--shadowBlur: 10,-->
+<!--shadowOffsetX: 0,-->
+<!--shadowColor: 'rgba(0, 0, 0, 0.5)'-->
+<!--}-->
+
+<!--},-->
+<!--]-->
+<!--}-->
+<!--;-->
+<!--// 使用刚指定的配置项和数据显示图表。-->
+<!--myChartAnswer.setOption(optionAnswer);-->
+<!--}-->
+<!--else {-->
+<!--layer.msg('获取信息失败！', {icon: 2, time: 500});-->
+<!--}-->
+<!--}-->
+<!--,-->
+<!--'GET'-->
+<!--)-->
+<!--}-->
+<!--})-->
+<!--;-->
+
+<!--</script>-->

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.QuestionSetMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.QuestionSetEntity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="question_lib_id" jdbcType="VARCHAR" property="questionLibId"/>
+        <result column="question_lib_name" jdbcType="VARCHAR" property="questionLibName"/>
+        <result column="question_id" jdbcType="INTEGER" property="questionId"/>
+        <result column="question_level" jdbcType="INTEGER" property="questionLevel"/>
+        <result column="choiceA_next" jdbcType="VARCHAR" property="choiceaNext"/>
+        <result column="choiceB_next" jdbcType="VARCHAR" property="choicebNext"/>
+        <result column="choiceC_next" jdbcType="VARCHAR" property="choicecNext"/>
+        <result column="choiceD_next" jdbcType="VARCHAR" property="choicedNext"/>
+        <result column="choiceE_next" jdbcType="VARCHAR" property="choiceeNext"/>
+        <result column="choice_right_next" jdbcType="VARCHAR" property="choiceRightNext"/>
+        <result column="choice_wrong_next" jdbcType="VARCHAR" property="choiceWrongNext"/>
+        <result column="default_next" jdbcType="VARCHAR" property="defaultNext"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+        <result column="is_abled" jdbcType="BIT" property="isAbled"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, question_lib_id, question_lib_name, question_id, question_level, choiceA_next, 
+    choiceB_next, choiceC_next, choiceD_next, choiceE_next, choice_right_next, choice_wrong_next, 
+    default_next,is_abled, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from question_set
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from question_set
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.QuestionSetEntity">
+    insert into question_set ( question_lib_id, question_lib_name,
+      question_id, question_level, choiceA_next, 
+      choiceB_next, choiceC_next, choiceD_next, 
+      choiceE_next, choice_right_next, choice_wrong_next, 
+      default_next,is_abled,org_id, create_time, update_time
+      )
+    values ( #{questionLibId,jdbcType=VARCHAR}, #{questionLibName,jdbcType=VARCHAR},
+      #{questionId,jdbcType=INTEGER}, #{questionLevel,jdbcType=INTEGER}, #{choiceaNext,jdbcType=VARCHAR}, 
+      #{choicebNext,jdbcType=VARCHAR}, #{choicecNext,jdbcType=VARCHAR}, #{choicedNext,jdbcType=VARCHAR}, 
+      #{choiceeNext,jdbcType=VARCHAR}, #{choiceRightNext,jdbcType=VARCHAR}, #{choiceWrongNext,jdbcType=VARCHAR}, 
+      #{defaultNext,jdbcType=VARCHAR},#{isAbled,jdbcType=BIT},#{orgId,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.QuestionSetEntity">
+        insert into question_set
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="questionLibId != null">
+                question_lib_id,
+            </if>
+            <if test="questionLibName != null">
+                question_lib_name,
+            </if>
+            <if test="questionId != null">
+                question_id,
+            </if>
+            <if test="questionLevel != null">
+                question_level,
+            </if>
+            <if test="choiceaNext != null">
+                choiceA_next,
+            </if>
+            <if test="choicebNext != null">
+                choiceB_next,
+            </if>
+            <if test="choicecNext != null">
+                choiceC_next,
+            </if>
+            <if test="choicedNext != null">
+                choiceD_next,
+            </if>
+            <if test="choiceeNext != null">
+                choiceE_next,
+            </if>
+            <if test="choiceRightNext != null">
+                choice_right_next,
+            </if>
+            <if test="choiceWrongNext != null">
+                choice_wrong_next,
+            </if>
+            <if test="defaultNext != null">
+                default_next,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="questionLibId != null">
+                #{questionLibId,jdbcType=VARCHAR},
+            </if>
+            <if test="questionLibName != null">
+                #{questionLibName,jdbcType=VARCHAR},
+            </if>
+            <if test="questionId != null">
+                #{questionId,jdbcType=INTEGER},
+            </if>
+            <if test="questionLevel != null">
+                #{questionLevel,jdbcType=INTEGER},
+            </if>
+            <if test="choiceaNext != null">
+                #{choiceaNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicebNext != null">
+                #{choicebNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicecNext != null">
+                #{choicecNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicedNext != null">
+                #{choicedNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceeNext != null">
+                #{choiceeNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceRightNext != null">
+                #{choiceRightNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceWrongNext != null">
+                #{choiceWrongNext,jdbcType=VARCHAR},
+            </if>
+            <if test="defaultNext != null">
+                #{defaultNext,jdbcType=VARCHAR},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.open.capacity.answer.entity.QuestionSetEntity">
+        update question_set
+        <set>
+            <if test="questionLibId != null">
+                question_lib_id = #{questionLibId,jdbcType=VARCHAR},
+            </if>
+            <if test="questionLibName != null">
+                question_lib_name = #{questionLibName,jdbcType=VARCHAR},
+            </if>
+            <if test="questionId != null">
+                question_id = #{questionId,jdbcType=INTEGER},
+            </if>
+            <if test="questionLevel != null">
+                question_level = #{questionLevel,jdbcType=INTEGER},
+            </if>
+            <if test="choiceaNext != null">
+                choiceA_next = #{choiceaNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicebNext != null">
+                choiceB_next = #{choicebNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicecNext != null">
+                choiceC_next = #{choicecNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choicedNext != null">
+                choiceD_next = #{choicedNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceeNext != null">
+                choiceE_next = #{choiceeNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceRightNext != null">
+                choice_right_next = #{choiceRightNext,jdbcType=VARCHAR},
+            </if>
+            <if test="choiceWrongNext != null">
+                choice_wrong_next = #{choiceWrongNext,jdbcType=VARCHAR},
+            </if>
+
+            <if test="isAbled != null">
+                is_abled = #{isAbled,jdbcType=BIT},
+            </if>
+            <if test="defaultNext != null">
+                default_next = #{defaultNext,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+        AND org_id =#{orgId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.open.capacity.answer.entity.QuestionSetEntity">
+    update question_set
+    set question_lib_id = #{questionLibId,jdbcType=VARCHAR},
+      question_lib_name = #{questionLibName,jdbcType=VARCHAR},
+      question_id = #{questionId,jdbcType=INTEGER},
+      question_level = #{questionLevel,jdbcType=INTEGER},
+      choiceA_next = #{choiceaNext,jdbcType=VARCHAR},
+      choiceB_next = #{choicebNext,jdbcType=VARCHAR},
+      choiceC_next = #{choicecNext,jdbcType=VARCHAR},
+      choiceD_next = #{choicedNext,jdbcType=VARCHAR},
+      choiceE_next = #{choiceeNext,jdbcType=VARCHAR},
+      choice_right_next = #{choiceRightNext,jdbcType=VARCHAR},
+      choice_wrong_next = #{choiceWrongNext,jdbcType=VARCHAR},
+      default_next = #{defaultNext,jdbcType=VARCHAR},
+      is_abled = #{isAbled,jdbcType=BIT},
+      org_id = #{orgId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE},
+      update_time = #{updateTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+    AND org_id =#{orgId,jdbcType=INTEGER}
+  </update>
+
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="questionLibName != null and questionLibName != ''">
+                and t.question_lib_name like concat('%', #{questionLibName}, '%')
+            </if>
+            <if test="questionLibId != null and questionLibId != ''">
+                AND question_lib_id = #{questionLibId}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findList" resultType="com.open.capacity.answer.entity.QuestionSetEntity">
+        select * from question_set t
+        <include refid="where"/>
+        GROUP BY t.question_lib_name
+        order by t.id desc
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+    <select id="findListByName" resultType="com.open.capacity.answer.entity.QuestionSetEntity">
+        select * from question_set t
+       WHERE  t.question_lib_name = #{questionLibName}
+       AND org_id = #{orgId,jdbcType=INTEGER}
+        order by t.id desc
+
+    </select>
+
+
+    <select id="querySetById" resultType="com.open.capacity.answer.vo.QuestionSetVO">
+        SELECT
+        *
+        FROM
+        question_set qs
+        LEFT JOIN questions q ON qs.question_id = q.id
+        WHERE
+        question_lib_id = #{questionLibId}
+            AND qs.org_id =#{orgId,jdbcType=INTEGER}
+        ORDER BY
+        question_level ASC
+
+    </select>
+
+    <select id="getFirstAbleSet" resultType="com.open.capacity.answer.vo.QuestionSetVO">
+        SELECT
+        *
+        FROM
+        question_set qs
+        LEFT JOIN questions q ON qs.question_id = q.id
+        WHERE
+        qs.is_abled = 1 AND question_level = 0
+        ORDER BY
+        question_level ASC
+
+    </select>
+
+
+    <select id="getAbleSetById" resultType="com.open.capacity.answer.vo.QuestionSetVO">
+            SELECT
+            *
+            FROM
+            question_set qs
+            LEFT JOIN questions q ON qs.question_id = q.id
+            WHERE
+            qs.is_abled = 1 AND q.id = #{setId}
+            and qs.question_lib_id = #{questionLibId}
+            ORDER BY
+            question_level ASC
+
+    </select>
+
+    <insert id="saveSet">
+        insert into question_set
+        ( question_lib_id, question_lib_name,
+        question_id, question_level, choiceA_next,
+        choiceB_next, choiceC_next, choiceD_next,
+        choiceE_next, choice_right_next, choice_wrong_next,
+        default_next, org_id,create_time, update_time
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.questionLibId,jdbcType=VARCHAR}, #{item.questionLibName,jdbcType=VARCHAR},
+            #{item.questionId,jdbcType=INTEGER}, #{item.questionLevel,jdbcType=INTEGER},
+            #{item.choiceaNext,jdbcType=VARCHAR},
+            #{item.choicebNext,jdbcType=VARCHAR}, #{item.choicecNext,jdbcType=VARCHAR},
+            #{item.choicedNext,jdbcType=VARCHAR},
+            #{item.choiceeNext,jdbcType=VARCHAR}, #{item.choiceRightNext,jdbcType=VARCHAR},
+            #{item.choiceWrongNext,jdbcType=VARCHAR},
+            #{item.defaultNext,jdbcType=VARCHAR},#{item.orgId,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=DATE},
+            #{item.updateTime,jdbcType=DATE}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="updateEnabled" parameterType="com.open.capacity.answer.entity.QuestionSetEntity">
+        update question_set
+        set
+        is_abled = #{isAbled,jdbcType=BIT},
+        update_time = #{updateTime,jdbcType=DATE}
+        where question_lib_id = #{questionLibId,jdbcType=VARCHAR}
+        AND org_id =#{orgId,jdbcType=INTEGER}
+    </update>
+</mapper>

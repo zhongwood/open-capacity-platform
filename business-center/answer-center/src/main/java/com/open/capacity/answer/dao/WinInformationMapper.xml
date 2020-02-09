@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.WinInformationMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.WinInformationEntity">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="prize_id" jdbcType="INTEGER" property="prizeId"/>
+        <result column="activity_id" jdbcType="INTEGER" property="activityId"/>
+        <result column="prize_name" jdbcType="VARCHAR" property="prizeName"/>
+        <result column="prize_code" jdbcType="VARCHAR" property="prizeCode"/>
+        <result column="account_id" jdbcType="VARCHAR" property="accountId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_mobile" jdbcType="CHAR" property="userMobile"/>
+        <result column="user_address" jdbcType="VARCHAR" property="userAddress"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.WinInformationEntity">
+    insert into win_information (id, prize_id, prize_name, 
+      prize_code, account_id, user_name, 
+      user_mobile, user_address, status, org_id,
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{prizeId,jdbcType=INTEGER}, #{prizeName,jdbcType=VARCHAR}, 
+      #{prizeCode,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{userMobile,jdbcType=CHAR}, #{userAddress,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER},
+      #{createTime,jdbcType=DATE}, #{updateTime,jdbcType=DATE})
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.WinInformationEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into win_information
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="prizeId != null">
+                prize_id,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="prizeName != null">
+                prize_name,
+            </if>
+            <if test="prizeCode != null">
+                prize_code,
+            </if>
+            <if test="accountId != null">
+                account_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userMobile != null">
+                user_mobile,
+            </if>
+            <if test="userAddress != null">
+                user_address,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="prizeId != null">
+                #{prizeId,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="prizeName != null">
+                #{prizeName,jdbcType=VARCHAR},
+            </if>
+            <if test="prizeCode != null">
+                #{prizeCode,jdbcType=VARCHAR},
+            </if>
+            <if test="accountId != null">
+                #{accountId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userMobile != null">
+                #{userMobile,jdbcType=CHAR},
+            </if>
+            <if test="userAddress != null">
+                #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+
+    </insert>
+
+
+    <sql id="where">
+        <where>
+            <if test="id != null and id != ''">
+                and t.id like concat('%', #{id}, '%')
+            </if>
+            <if test="userMobile != null and userMobile != ''">
+                and t.user_mobile like concat('%', #{userMobile}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                and t.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and t.status like concat('%', #{status}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and t.org_id =#{orgId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+    <select id="queryPriceLogList" resultType="com.open.capacity.answer.entity.WinInformationEntity">
+        select * from win_information t
+        <include refid="where"/>
+        order by t.create_time desc
+        <if test="page != null and page >= 0 and limit != null and limit > 0">
+            limit #{page},#{limit}
+        </if>
+    </select>
+
+
+    <select id="selectCount" parameterType="com.open.capacity.answer.entity.WinInformationEntity"
+            resultType="java.lang.Integer">
+        select count(1) from win_information
+       WHERE activity_id = #{activityId,jdbcType=INTEGER}
+       AND account_id = #{accountId,jdbcType=INTEGER}
+       AND org_id = #{orgId,jdbcType=INTEGER}
+    </select>
+
+
+    <update id="updateLog" parameterType="java.lang.Integer">
+        update win_information
+        set
+        status = 2,
+        update_time = now()
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateWinInformation" parameterType="com.open.capacity.answer.entity.WinInformationEntity">
+        update win_information
+        set
+        <if test="userName != null">
+            user_name = #{userName,jdbcType=VARCHAR},
+        </if>
+        <if test="userMobile != null">
+            user_mobile = #{userMobile,jdbcType=CHAR},
+        </if>
+        <if test="userAddress != null">
+            user_address = #{userAddress,jdbcType=VARCHAR}
+        </if>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="selectCode" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select prize_code from win_information
+        WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>

@@ -1,0 +1,191 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">套题管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>套题管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="questionset-search-key">
+                <option value="">-请选择-</option>
+                <option value="thirdType">题库名称</option>
+            </select>&emsp;
+            <input id="questionset-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="questionset-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="questionset-btn-add" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
+        </div>
+
+        <table class="layui-table" id="questionset-table" lay-filter="questionset-table"></table>
+    </div>
+</div>
+
+
+<!-- 表格操作列 -->
+<script type="text/html" id="questionset-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">更新题库</a>
+    <a class="layui-btn layui-btn-xs" lay-event="createURL">生成题库链接</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="questionset-tpl-state">
+    <input type="checkbox" lay-filter="questionset-tpl-state" value="{{d.questionLibId}}" lay-skin="switch"
+           lay-text="启用|停用"
+           {{d.isAbled==true?'checked':''}}/>
+</script>
+
+<!-- 关联弹窗 -->
+<script type="text/html" id="questionset-bind-model">
+    <div class="layui-form-item">
+        <label class="layui-form-label">视频标题</label>
+        <div class="layui-input-block">
+            <select name="videoId" xm-select-radio="" xm-select="videoId" id="video_select" lay-verify="required">
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" ew-event="closeDialog" type="button">取消</button>
+        <button class="layui-btn" id="questionset-form-submit" lay-submit>保存</button>
+    </div>
+</script>
+<script type="text/javascript" src="../../qrcode/jquery.qrcode.min.js"></script>
+<script>
+    layui.use(['form', 'table', 'util', 'config', 'admin', 'formSelects'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var config = layui.config;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+
+        // 渲染表格
+        table.render({
+            elem: '#questionset-table',
+            // url: config.base_server + 'user_query.json',
+            url: config.base_server + 'api-answer/setList',
+            method: 'GET',
+            where: {
+                access_token: config.getToken().access_token
+            },
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'questionLibId', sort: true, title: '套题编号'},
+                {field: 'questionLibName', sort: true, title: '套题名称'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.updateTime);
+                    }, title: '更新时间'
+                },
+                {field: 'isAbled', sort: true, templet: '#questionset-tpl-state', title: '状态', width: 150},
+                {align: 'center', toolbar: '#questionset-table-bar', title: '操作', width: 250}
+            ]]
+        });
+
+        // 搜索按钮点击事件
+        $('#questionset-btn-search').click(function () {
+            var key = $('#questionset-search-key').val();
+            var value = $('#questionset-search-value').val();
+            table.reload('questionset-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+        // 工具条点击事件
+        table.on('tool(questionset-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            debugger
+            if (layEvent === 'edit') { // 修改
+                admin.putTempData('questionLibId', data.questionLibId);
+                this.href = "#!vieworupdateset";
+            } else if (layEvent === 'createURL') { // 生成url 用于微信绑定
+                admin.req('api-user/users/getOrgId', {}, function (data) {
+                    layer.closeAll('loading');
+                    if (data.resp_code == 0) {
+                        debugger
+                        var url = "http://video.shiweiinfo.com/index.html?orgId=" + data.datas + "&setId=" + obj.data.questionLibId
+
+                        layer.alert(url + '<div id="qrcode" style="text-align: center;padding: 9px;"></div>', {
+                            closeBtn: 1    // 是否显示关闭按钮
+                            , btn: ['生成二维码', '关闭'] //按钮
+                            , yes: function () {
+                                var html = $("#qrcode").html();
+                                if (html)
+                                    return;
+                                else
+                                    $("#qrcode").qrcode(url);
+                            }
+                            , btn2: function (index) {
+                                layer.close(index);
+                            }
+                        });
+
+                        // layer.alert('<div id="qrcode"></div>', {},
+                        //     function (index) {
+                        //         $("#qrcode").qrcode(url);
+                        //         layer.close(index);
+                        //     });
+
+                    } else {
+                        layer.msg("链接生成失败！", {icon: 2, time: 500});
+                    }
+                }, 'GET');
+            }
+        })
+        ;
+
+        // 添加按钮绑定权限
+        if (!admin.hasPerm('questionset:post/questionset/saveOrUpdate')) {
+            $('#questionset-btn-add').hide();
+        }
+
+        // 添加按钮点击事件
+        $('#questionset-btn-add').click(function () {
+            showEditModel();
+        });
+
+        //显示表单弹窗
+        var showEditModel = function (data) {
+            //修改sex值
+            if (data) {
+                data.questionType = data.questionType + '';
+            }
+            admin.putTempData('t_questionset', data);
+            var title = data ? '修改题目' : '添加题库';
+            admin.popupCenter({
+                title: title,
+                path: 'pages/answer/set_form.html',
+                finish: function () {
+                    table.reload('questionset-table', {});
+                }
+            });
+        };
+
+        form.on('switch(questionset-tpl-state)', function (obj) {
+            layer.load(2);
+            admin.req('api-answer/answer/updateEnabled', {
+                questionLibId: obj.elem.value,
+                enabled: obj.elem.checked ? true : false
+            }, function (data) {
+                layer.closeAll('loading');
+                if (data.resp_code == 0) {
+                    layer.msg(data.resp_msg, {icon: 1, time: 500});
+                    //table.reload('table-user', {});
+                } else {
+                    layer.msg(data.resp_msg, {icon: 2, time: 500});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            }, 'GET');
+        });
+    })
+    ;
+</script>

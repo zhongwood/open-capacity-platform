@@ -1,0 +1,118 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">套题更新</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!console">首页</a>
+          <a><cite>套题更新</cite></a>
+        </span>
+    </div>
+
+    <div class="layui-card layui-form" id="layui-card">
+        <div id="set_title" class="layui-card-header" style="text-align: center"></div>
+
+    </div>
+</div>
+
+
+<script>
+
+
+    layui.use(['admin', 'element', 'layer', 'formSelects', 'config', 'form', 'table'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+        var config = layui.config;
+        var form = layui.form;
+        var table = layui.table;
+
+        // 回显uanswer数据
+        var questionLibId = admin.getTempData('questionLibId');
+        debugger
+        admin.req('api-answer/querySetById?questionLibId=' + questionLibId, {}, function (data) {
+                $('#set_title').html(data[0].questionLibName);
+                layer.closeAll('loading');
+                if (data) {
+                    var temp = '<div class="layui-card-body"><div class="layui-collapse" lay-filter="test">';
+                    console.log(data)
+
+                    //渲染下拉框
+                    // 渲染多选下拉框
+                    var tempselect = '<select name="modules" lay-verify="required" lay-search="" ><option value="">默认</option><option value="-1">结束</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        tempselect += '<option value="' + data[i].questionId + '">' + data[i].question + '</option>';
+                    }
+                    tempselect += '</select>';
+
+                    // 渲染多选下拉框
+                    for (var i = 0; i < data.length; i++) {
+                        temp += '<div class="layui-colla-item"><h2 class="layui-colla-title">Q' + (i + 1) + ":";
+                        temp += data[i].question;
+                        temp += ' </h2><div class="layui-colla-content"><table class="layui-table"><colgroup><col width="100"><col width="500"><col></colgroup><tbody>';
+
+                        //选择题
+                        if (data[i].questionType == 1) {
+                            temp += '<tr><td>A:</td><td>';
+                            temp += data[i].choicea;
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_A' + '"/>' + tempselect + '</div></div></td></tr>';
+                            temp += '<tr><td>B:</td><td>';
+                            temp += data[i].choiceb;
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_B' + '"/>' + tempselect + '</div></div></td></tr>';
+                            temp += '<tr><td>C:</td><td>';
+                            temp += data[i].choicec;
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_C' + '"/>' + tempselect + '</div></div></td></tr>';
+                            temp += '<tr><td>D:</td><td>';
+                            temp += data[i].choiced;
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_D' + '"/>' + tempselect + '</div></div></td></tr>';
+                            temp += '<tr><td>E:</td><td>';
+                            temp += data[i].choicee;
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_E' + '"/>' + tempselect + '</div></div></td></tr>';
+                        } else {
+                            temp += '<tr><td>正确:</td><td>';
+                            temp += '----';
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_R' + '"/>' + tempselect + '</div></div></td></tr>';
+                            temp += '<tr><td>错误:</td><td>';
+                            temp += '----';
+                            temp += '</td><td><div class="layui-form-item"><label class="layui-form-label">逻辑关联：</label><div class="layui-input-inline"><input type="hidden" value="' + data[i].id + '_W' + '"/>' + tempselect + '</div></div></td></tr>';
+
+                        }
+                        temp += '</tbody></table></div></div>';
+                    }
+                    debugger
+                    temp += '</div></div>';
+                    $('#layui-card').append(temp);
+
+                    element.init();
+                    form.render();
+                }
+                else {
+                    layer.msg('获取失败', {icon: 2, time: 500});
+                }
+            }
+            ,
+            'GET'
+        );
+
+        form.on('select()', function (data) {
+            var idWithChoice = $(data.elem).prev('input').val();
+            var arr = idWithChoice.split('_')
+            debugger
+            admin.req('api-answer/updateSetLink', JSON.stringify({
+                    id: arr[0],
+                    choice: arr[1],
+                    questionId: data.value
+                }),
+
+                function (data) {
+                    if (data.resp_code == 0) {
+                        layer.msg('更新成功！', {icon: 1, time: 500});
+                    } else {
+                        layer.msg('更新失败！', {icon: 2, time: 500});
+                    }
+
+                }, 'POST');
+        });
+
+
+    });
+</script>

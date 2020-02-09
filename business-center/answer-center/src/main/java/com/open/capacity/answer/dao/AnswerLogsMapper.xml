@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.open.capacity.answer.dao.AnswerLogsMapper">
+    <resultMap id="BaseResultMap" type="com.open.capacity.answer.entity.AnswerLogsEntity">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="org_id" jdbcType="INTEGER" property="orgId"/>
+        <result column="set_id" jdbcType="VARCHAR" property="setId"/>
+        <result column="question_id" jdbcType="INTEGER" property="questionId"/>
+        <result column="answer" jdbcType="INTEGER" property="answer"/>
+        <result column="answer_time" jdbcType="TIMESTAMP" property="answerTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.open.capacity.answer.entity.AnswerLogsEntity">
+    insert into answer_logs (user_id,org_id,set_id, question_id,
+      answer, answer_time
+      )
+    values ( #{userId,jdbcType=INTEGER},#{orgId,jdbcType=INTEGER},#{setId,jdbcType=VARCHAR}, #{questionId,jdbcType=INTEGER},
+      #{answer,jdbcType=INTEGER},  #{answerTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.open.capacity.answer.entity.AnswerLogsEntity">
+        insert into answer_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="setId != null">
+                set_id,
+            </if>
+            <if test="questionId != null">
+                question_id,
+            </if>
+            <if test="answer != null">
+                answer,
+            </if>
+            <if test="answerTime != null">
+                answer_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="setId != null">
+                #{setId,jdbcType=VARCHAR},
+            </if>
+            <if test="questionId != null">
+                #{questionId,jdbcType=INTEGER},
+            </if>
+            <if test="answer != null">
+                #{answer,jdbcType=INTEGER},
+            </if>
+            <if test="answerTime != null">
+                #{answerTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectCount"
+            resultType="java.lang.Integer">
+        select
+        count(1)
+        from answer_logs qs
+        where qs.org_id = #{orgId,jdbcType=INTEGER}
+        AND qs.question_id = #{questionId,jdbcType=INTEGER}
+        AND qs.set_id = #{setId,jdbcType=VARCHAR};
+    </select>
+
+</mapper>
